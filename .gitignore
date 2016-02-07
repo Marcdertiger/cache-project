@@ -63,4 +63,5 @@ incremental_db/
 simulation/
 timing/
 testbench/
+.qsys_edit/
 *_sim/
