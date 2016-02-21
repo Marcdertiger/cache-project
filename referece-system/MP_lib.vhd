@@ -26,7 +26,7 @@ port (
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 
-		mem_addr					: out std_logic_vector(11 downto 0);
+		mem_addr					: out std_logic_vector(7 downto 0);
 		Mre_s						: out std_logic;
 		Mwe_s						: out std_logic;	
 		oe_s						: out std_logic;
@@ -98,25 +98,27 @@ end component;
 component memory_4KB is
 port	(
 		address		: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
+		sys_reset	: IN STD_LOGIC := '1';
 		clken			: IN STD_LOGIC  := '1';
 		clock			: IN STD_LOGIC  := '1';
 		data_in		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		Mre			: IN STD_LOGIC ;
 		Mwe			: IN STD_LOGIC ;
 		data_out		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 end component;
 
---component memory is
---port ( 	
---	clock	: 	in std_logic;
---	rst		: 	in std_logic;
---	Mre		:	in std_logic;
---	Mwe		:	in std_logic;
---	address	:	in std_logic_vector(7 downto 0);
---	data_in	:	in std_logic_vector(15 downto 0);
---	data_out:	out std_logic_vector(15 downto 0)
---);
---end component;
+component memory is
+port ( 	
+	clock	: 	in std_logic;
+	rst		: 	in std_logic;
+	Mre		:	in std_logic;
+	Mwe		:	in std_logic;
+	address	:	in std_logic_vector(7 downto 0);
+	data_in	:	in std_logic_vector(15 downto 0);
+	data_out:	out std_logic_vector(15 downto 0)
+);
+end component;
 
 component obuf is
 port(	
