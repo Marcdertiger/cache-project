@@ -56,7 +56,7 @@ architecture rtl of SimpleCompArch is
 			sys_clk_div <= '0';
 		elsif (rising_edge(sys_clk)) then
 			count <= count + 1;
-			if (count = 8) then 
+			if (count = 3) then 
 				sys_clk_div <= NOT sys_clk_div;
 				count <= 0;
 			end if;
