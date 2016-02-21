@@ -4,20 +4,19 @@ editor if you plan to continue editing the block that represents it in
 the Block Editor! File corruption is VERY likely to occur.
 */
 /*
-Copyright (C) 1991-2014 Altera Corporation. All rights reserved.
+Copyright (C) 1991-2013 Altera Corporation
 Your use of Altera Corporation's design tools, logic functions 
 and other software and tools, and its AMPP partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
 to the terms and conditions of the Altera Program License 
-Subscription Agreement, the Altera Quartus II License Agreement,
-the Altera MegaCore Function License Agreement, or other 
-applicable license agreement, including, without limitation, 
-that your use is for the sole purpose of programming logic 
-devices manufactured by Altera and sold by Altera or its 
-authorized distributors.  Please refer to the applicable 
-agreement for further details.
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
 */
 (header "symbol" (version "1.2"))
 (symbol
@@ -41,9 +40,16 @@ agreement for further details.
 	(port
 		(pt 0 64)
 		(input)
-		(text "address[11..0]" (rect 0 0 81 14)(font "Arial" (font_size 8)))
-		(text "address[11..0]" (rect 4 50 71 63)(font "Arial" (font_size 8)))
+		(text "address[7..0]" (rect 0 0 75 14)(font "Arial" (font_size 8)))
+		(text "address[7..0]" (rect 4 50 66 63)(font "Arial" (font_size 8)))
 		(line (pt 0 64)(pt 88 64)(line_width 3))
+	)
+	(port
+		(pt 0 80)
+		(input)
+		(text "rden" (rect 0 0 25 14)(font "Arial" (font_size 8)))
+		(text "rden" (rect 4 66 24 79)(font "Arial" (font_size 8)))
+		(line (pt 0 80)(pt 88 80))
 	)
 	(port
 		(pt 0 112)
@@ -68,7 +74,7 @@ agreement for further details.
 	)
 	(drawing
 		(text "16 bits" (rect 109 24 194 159)(font "Arial" )(vertical))
-		(text "4096 words" (rect 120 12 214 177)(font "Arial" )(vertical))
+		(text "256 words" (rect 120 13 212 173)(font "Arial" )(vertical))
 		(text "Block type: M9K" (rect 48 130 164 271)(font "Arial" ))
 		(line (pt 104 24)(pt 136 24))
 		(line (pt 136 24)(pt 136 96))
@@ -108,6 +114,14 @@ agreement for further details.
 		(line (pt 90 68)(pt 88 70))
 		(line (pt 80 68)(pt 88 68))
 		(line (pt 96 64)(pt 104 64)(line_width 3))
+		(line (pt 88 75)(pt 96 75))
+		(line (pt 96 75)(pt 96 87))
+		(line (pt 96 87)(pt 88 87))
+		(line (pt 88 87)(pt 88 75))
+		(line (pt 88 82)(pt 90 84))
+		(line (pt 90 84)(pt 88 86))
+		(line (pt 80 84)(pt 88 84))
+		(line (pt 96 80)(pt 104 80))
 		(line (pt 80 112)(pt 80 36))
 		(line (pt 144 112)(pt 144 36))
 		(line (pt 0 0)(pt 217 0))

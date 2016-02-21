@@ -186,6 +186,7 @@ begin
 			state <= S11a;
 	  when S11a =>  oe_ctrl <= '1'; 
 			state <= S1;
+		
 	  when others =>
 	end case;
     end if;

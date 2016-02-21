@@ -96,15 +96,15 @@ port(
 end component;
 
 component memory_4KB is
-port	(
-		address		: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
-		sys_reset	: IN STD_LOGIC := '1';
-		clken			: IN STD_LOGIC  := '1';
-		clock			: IN STD_LOGIC  := '1';
-		data_in		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-		Mre			: IN STD_LOGIC ;
-		Mwe			: IN STD_LOGIC ;
-		data_out		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+	PORT
+	(
+		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		clken		: IN STD_LOGIC  := '1';
+		clock		: IN STD_LOGIC  := '1';
+		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		rden		: IN STD_LOGIC;
+		wren		: IN STD_LOGIC ;
+		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 end component;
 
