@@ -72,7 +72,6 @@ db/
 incremental_db/
 timing/
 testbench/
-simulation/
 .qsys_edit/
 *_sim/
 
