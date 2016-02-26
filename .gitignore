@@ -54,7 +54,6 @@
 *.sdc
 *.tcl
 *.pin
-*.mif
 *.hex
 *.temp
 *_info
