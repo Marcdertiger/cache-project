@@ -1,5 +1,9 @@
 # Associative Cache Project for ECE 3242
 
+## Getting Started
+This project does not have a quartus qsf file. Therefore we need to reconfigure the Quartus project
+to use ModelSim and VHDL, and also change the directory for simulation from simulation/modelsim to ./modelsim
+
 ## Reference System
 
 ### Creating 1/8 Clock
