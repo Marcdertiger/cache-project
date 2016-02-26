@@ -64,8 +64,13 @@
 *.xrf
 *.mti
 
+*.mpf
+*.wlf
+
 simulation/*
 !simulation/*.do
+qsim/
+work/
 
 # ignore Quartus II generated folders
 db/
