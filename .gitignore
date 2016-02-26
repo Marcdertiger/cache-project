@@ -57,12 +57,23 @@
 *.mif
 *.hex
 *.temp
+*_info
+*_make
+*.vho
+*.sft
+*.xrf
+*.mti
+
+simulation/*
+!simulation/*.do
 
 # ignore Quartus II generated folders
 db/
 incremental_db/
-simulation/
 timing/
 testbench/
+simulation/
 .qsys_edit/
 *_sim/
+
+
