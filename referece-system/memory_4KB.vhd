@@ -44,7 +44,7 @@ ENTITY memory_4KB IS
 	(
 		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
 		clken		: IN STD_LOGIC  := '1';
-		clock		: IN STD_LOGIC  := '1';
+		clock		: IN STD_LOGIC; --deleted := '1';
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;

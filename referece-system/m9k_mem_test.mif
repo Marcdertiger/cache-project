@@ -19,12 +19,13 @@ WIDTH=16;
 DEPTH=4096;
 
 ADDRESS_RADIX=UNS;
-DATA_RADIX=UNS;
+DATA_RADIX=HEX;
 
-CONTENT BEGIN
-	0 : x"30EE";	   	-- R0 <- #2	
-	1 : x"1050";		-- M[50] = R0
-	2 : x"7050";		-- Output MEM 50
-	3 : x"F000":		-- HALT
-	[4..4095]  :   0;
+CONTENT 
+BEGIN
+	0 : 30EE;	   	-- R0 <- #7	
+	1 : 1050;		-- M[50] = R0
+	--2 : 7050;		-- Output MEM 50
+	2 : F000;		-- HALT
+	[3..4095]  :   0;
 END;
