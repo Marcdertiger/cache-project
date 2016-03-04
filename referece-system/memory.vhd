@@ -32,10 +32,9 @@ begin
 	begin							-- program to generate the first 15 coeff. of the  equation y(n) = 2x(n) + y(n-1) - y(n-2)	 
 		if rst='1' then		-- x=2,3,...,12,13,14, y(0)=1 andy(1)=3.
 			tmp_ram <= (
-						0 => x"30EE",	   	-- R0 <- #2			-> x(2)=2
-						1 => x"1050",			-- M[50] = R0
-						2 => x"7050",			-- Output MEM 50
-						3 => x"F000",			-- HALT
+						0 => x"7002",	   	-- R0 <- #2			-> x(2)=2
+						1 => x"F000",			-- M[50] = R0
+						2 => x"0E0E",			-- HALT
 						others => x"0000");
 		else
 			if (clock'event and clock = '1') then

@@ -9,4 +9,6 @@ add wave sys_output
 add wave mem_clk_en
 add wave D_mem_addr
 add wave D_mdout_bus
+add wave D_Mre
+add wave D_PCld
 run 1ns
