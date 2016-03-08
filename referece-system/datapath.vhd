@@ -30,7 +30,8 @@ port(
 	ALUs_dp:	in 	std_logic_vector(1 downto 0);
 	ALUz_dp:	out 	std_logic;
 	RF1out_dp:	out 	std_logic_vector(15 downto 0);
-	ALUout_dp:	out 	std_logic_vector(15 downto 0)
+	ALUout_dp:	out 	std_logic_vector(15 downto 0);
+	tmp_rf : out rf_type
 );
 end datapath;
 
@@ -46,7 +47,7 @@ begin
   U2: reg_file port map(clock_dp, rst_dp, RFwe_dp, 
 			RFr1e_dp, RFr2e_dp, 
 			RFwa_dp, RFr1a_dp, RFr2a_dp, 
-			mux2rf, rf2alu1, rf2alu2 );
+			mux2rf, rf2alu1, rf2alu2, tmp_rf);
   U3: alu port map( rf2alu1, rf2alu2, jp_en, ALUs_dp, 
 		    ALUz_dp, alu2memmux);
 			 

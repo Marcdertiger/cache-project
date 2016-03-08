@@ -7,6 +7,9 @@ package MP_lib is
 
 type ram_type is array (0 to 255) of 
         		std_logic_vector(15 downto 0);
+				
+type rf_type is array (0 to 15) of 
+        std_logic_vector(15 downto 0);
 
 constant ZERO : std_logic_vector(15 downto 0) := "0000000000000000";
 constant HIRES : std_logic_vector(15 downto 0) := "ZZZZZZZZZZZZZZZZ";
@@ -32,6 +35,7 @@ port (
 		oe_s						: out std_logic;
 		current_state: out std_logic_vector(7 downto 0);
 		IR_word					: out std_logic_vector(15 downto 0);
+		tmp_rf 					: out rf_type;
 		-- Debug variables: output to upper level for simulation purpose only
 		D_rfout_bus: out std_logic_vector(15 downto 0);  
 		D_RFwa_s, D_RFr1a_s, D_RFr2a_s: out std_logic_vector(3 downto 0);
@@ -154,7 +158,8 @@ port (
 	RFr2a	: 	in std_logic_vector(3 downto 0);
 	RFw	: 	in std_logic_vector(15 downto 0);
 	RFr1	: 	out std_logic_vector(15 downto 0);
-	RFr2	:	out std_logic_vector(15 downto 0)
+	RFr2	:	out std_logic_vector(15 downto 0);
+	debug_tmp_rf : out rf_type
 );
 end component;
 
@@ -211,7 +216,8 @@ port(
 	ALUs_dp:	in 	std_logic_vector(1 downto 0);
 	ALUz_dp:	out 	std_logic;
 	RF1out_dp:	out 	std_logic_vector(15 downto 0);
-	ALUout_dp:	out 	std_logic_vector(15 downto 0)
+	ALUout_dp:	out 	std_logic_vector(15 downto 0);
+	tmp_rf : out rf_type
 );
 end component;
 

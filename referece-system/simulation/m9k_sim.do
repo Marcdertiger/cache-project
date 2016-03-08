@@ -15,6 +15,13 @@ add wave D_PCld
 add wave D_oe
 add wave D_current_state
 add wave D_IR_word
+add wave D_rf_0
+add wave D_rf_1
+add wave D_rf_2
+add wave D_rf_3
+add wave D_rf_4
+add wave D_rf_5
+add wave D_rf_6
 
 radix -hexadecimal
 

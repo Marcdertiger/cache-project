@@ -23,9 +23,30 @@ DATA_RADIX=HEX;
 
 CONTENT 
 BEGIN
-	0 : 30EE;
-	1 : 1050;
-	2 : 7050;
-	3 : F000;
-	[4..4095]  :   0;
+	0 : 3000;	   		-- R0 <- #0			mov R0, #0
+	1 : 3101;			-- R1 <- #1			mov R1, #1
+	2 : 3234;			-- R2 <- #52		mov R2, #52
+	3 : 3301;			-- R3 <- #1			mov R3, #1
+	4 : 1032;			-- M[50] <- R0 		mov M[50], R0
+	5 : 1133;			-- M[51] <- R1 		mov M[51], R1
+	6 : 1164;			-- M[100]<- R1		mov M[100], R1
+	7 : 4100;			-- R1 <- R1 + R0	add R1, R0
+	8 : 0064;			-- R0 <- M[100]		mov R0, M[100]
+	9 : 2210;			-- M[R2] <- R1 		mov M[R2], R1
+	10 : 4230;			-- R2 <- R2 + R3 	add R2, R3
+	11 : 043B;			-- R4 <- M[59]		mov R4, M[59]
+	12 : 6406;  		-- R4=0: PC<- #6	jz R4, #6
+
+	13 : 7032;			-- output<- M[50]   mov obuf_out,M[50]
+	14 : 7033;			-- output<- M[51]   mov obuf_out,M[51]
+	15 : 7034;			-- output<- M[52]   mov obuf_out,M[52]
+	16 : 7035;			-- output<- M[53]   mov obuf_out,M[53]
+	17 : 7036;			-- output<- M[54]   mov obuf_out,M[54]
+	18 : 7037;			-- output<- M[55]   mov obuf_out,M[55]
+	19 : 7038;			-- output<- M[56]   mov obuf_out,M[56]
+	20 : 7039;			-- output<- M[57]   mov obuf_out,M[57]
+	21 : 703A;			-- output<- M[58]   mov obuf_out,M[58]
+	22 : 703B;			-- output<- M[59]   mov obuf_out,M[59]			
+	23 : F000;		
+	[24..4095]  :   0;
 END;
