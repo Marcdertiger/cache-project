@@ -31,7 +31,10 @@ port( sys_clk							:	in std_logic;
 		-- Debug signals from Memory: output for simulation purpose only	
 		D_mdout_bus,D_mdin_bus					: out std_logic_vector(15 downto 0); 
 		D_mem_addr									: out std_logic_vector(11 downto 0); 
-		D_Mre,D_Mwe									: out std_logic 
+		D_Mre,D_Mwe									: out std_logic;
+		D_current_state							: out std_logic_vector(7 downto 0);
+		D_IR_word									: out std_logic_vector(15 downto 0)
+
 		-- end debug variables	
 );
 end SimpleCompArch;
@@ -44,7 +47,8 @@ architecture rtl of SimpleCompArch is
 	signal Mre								: std_logic;							 			 -- Mem. read enable  	(CTRLER	-> Mem) 
 	signal Mwe								: std_logic;							 			 -- Mem. write enable 	(CTRLER	-> Mem)
 	signal mem_address_cheat : std_logic_vector(11 downto 0);
-
+	signal current_state			: std_logic_vector(7 downto 0);
+	signal IR_word				:	std_logic_vector(15 downto 0);
 	--System local variables
 	signal oe							: std_logic;
 	
@@ -76,19 +80,21 @@ Unit1: CPU port map (
 	Mre,
 	Mwe,
 	oe,
+	current_state,
+	IR_word,
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
---Unit2: memory_4KB port map(
-	--mem_addr,
-	--mem_clk_en,
-	--sys_clk,
-	--mdin_bus,
-	--Mre,
-	--Mwe,
-	--mdout_bus);
+Unit2: memory_4KB port map(
+	mem_addr,
+	mem_clk_en,
+	sys_clk,
+	mdin_bus,
+	Mre,
+	Mwe,
+	mdout_bus);
 																					
-Unit2: memory port map(	sys_clk,sys_rst,Mre,Mwe,mem_addr,mdin_bus,mdout_bus);
+--Unit2: memory port map(	sys_clk,sys_rst,Mre,Mwe,mem_addr,mdin_bus,mdout_bus);
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
 -- Debug signals: output to upper level for simulation purpose only
@@ -98,6 +104,8 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_mem_addr <= mem_address_cheat; 
 	D_Mre <= Mre;
 	D_Mwe <= Mwe;
+	D_current_state <= current_state;
+	D_IR_word <= IR_word;
 -- end debug variables		
 		
 end rtl;

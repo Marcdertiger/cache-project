@@ -30,6 +30,8 @@ port (
 		Mre_s						: out std_logic;
 		Mwe_s						: out std_logic;	
 		oe_s						: out std_logic;
+		current_state: out std_logic_vector(7 downto 0);
+		IR_word					: out std_logic_vector(15 downto 0);
 		-- Debug variables: output to upper level for simulation purpose only
 		D_rfout_bus: out std_logic_vector(15 downto 0);  
 		D_RFwa_s, D_RFr1a_s, D_RFr2a_s: out std_logic_vector(3 downto 0);
@@ -82,7 +84,8 @@ port(
 	Ms_ctrl:	out std_logic_vector(1 downto 0);
 	Mre_ctrl:	out std_logic;
 	Mwe_ctrl:	out std_logic;
-	oe_ctrl:	out std_logic
+	oe_ctrl:	out std_logic;
+	current_state: out std_logic_vector(7 downto 0)
 );
 end component;
 
@@ -185,7 +188,9 @@ port(
 	ALUs_cu:	out	std_logic_vector(1 downto 0);	
 	Mre_cu:		out 	std_logic;
 	Mwe_cu:		out 	std_logic;
-	oe_cu:		out 	std_logic
+	oe_cu:		out 	std_logic;
+	current_state: out std_logic_vector(7 downto 0);
+	IR_word					: out std_logic_vector(15 downto 0)
 );
 end component;
 

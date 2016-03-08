@@ -33,7 +33,9 @@ port(
 	ALUs_cu:		out std_logic_vector(1 downto 0);	
 	Mre_cu:		out std_logic;
 	Mwe_cu:		out std_logic;
-	oe_cu:		out std_logic
+	oe_cu:		out std_logic;
+	current_state: out std_logic_vector(7 downto 0);
+	IR_word	: 	out std_logic_vector(15 downto 0)
 );
 end ctrl_unit;
 
@@ -49,11 +51,12 @@ begin
 
   IR2mux_b <= "000000000000" & IR_sig(11 downto 8);	
   immdata <= "00000000" & IR_sig(7 downto 0);
+  IR_word <= IR_sig;
   
   U0: controller port map(clock_cu,rst_cu,IR_sig,RFs_cu,RFwa_cu,
 			    RFr1a_cu,RFr2a_cu,RFwe_cu,RFr1e_cu,
 			    RFr2e_cu,ALUs_cu,jpen_cu,PCinc_sig,
-			    PCclr_sig,IRld_sig,Ms_sig,Mre_cu,Mwe_cu,oe_cu);
+			    PCclr_sig,IRld_sig,Ms_sig,Mre_cu,Mwe_cu,oe_cu,current_state);
   U1: PC port map(clock_cu,PCld_cu, PCinc_sig, PCclr_sig, IR2mux_a, PC2mux);
   U2: IR port map(mdata_out, IRld_sig, IR2mux_a, IR_sig);
   U3: bigmux port map(dpdata_out,IR2mux_a,PC2mux,IR2mux_b,Ms_sig,maddr_in);
