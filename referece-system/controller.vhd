@@ -44,6 +44,7 @@ architecture fsm of controller is
 			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE);
   signal state: state_type;
 	signal next_state: state_type;
+	signal count : integer:=0;
 begin
   process(clock, rst, IR_word, mem_ready)
     variable OPCODE: std_logic_vector(3 downto 0);
@@ -244,8 +245,9 @@ begin
 			current_state <= x"0B";
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1'; -- read memory
-			Mwe_ctrl <= '0';		  
-			state <= S11wait;
+			Mwe_ctrl <= '0';
+			next_state <= S11wait;
+			state <= WAIT_STATE;		  
 		when S11wait =>
 			current_state <= x"CB";
 			state <= S11a;
@@ -253,9 +255,14 @@ begin
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
-		when WAIT_STATE =>
+		-- A 
+		when WAIT_STATE =>	
 			if (mem_ready = '1') then
-				state <= next_state;
+				count <= count + 1;
+				if (count = 1) then
+					state <= next_state;
+					count <= 0;
+				end if;
 			end if;
 		
 	  when others =>
