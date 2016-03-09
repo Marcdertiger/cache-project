@@ -1,0 +1,73 @@
+---- Cache Controller
+--
+---- Replacement policy : write back
+---- Architecture		 : Look through architecture
+--
+---- Has an input signals from the cpu
+---- Has an output signals to the system (where appropriate to communicate to the main memory)
+---- Has two port access to SRAM and TRAM**********
+--
+---- TRAM: where the tag of the cached lines are found
+---- SRAM: cached memory 
+--
+---- needs to do : 
+----		1. takes in address from cpu and checks if tag is in it.
+----		2. HIT	: tag is in TRAM -> respond to cpu request without starting main memory access.
+----			MISS	: Cache passes the bus cycle onto system bus
+----					 -Main memory responds to cpu request ( to the cache controller)
+----					 -CC takes info from data line and saves it in SRAM and TRAM.
+--
+--
+--
+--
+--
+--
+--
+--LIBRARY ieee;
+--USE ieee.std_logic_1164.all;
+--
+--LIBRARY altera_mf;
+--USE altera_mf.all;
+--
+--ENTITY cache_controller IS
+--	PORT
+--	(
+--		
+--		
+--		
+--		
+--		
+--	);
+--END cache_controller;
+--
+--
+--architecture fsm of cache_controller is
+--
+--type state_type is (  S0,S1);
+--  signal state: state_type;
+--  
+--  
+--begin
+-- 
+--	--process (clock, enable?, address)
+-- 
+-- 
+-- 
+--	when S0 ->
+--		--check if there is a hit or a miss
+--		--then go to s1 or s2 
+--		
+--		
+--	when S1 -> there is a hit
+--
+--
+--
+--	when S2 -> no hit
+--
+--
+--	end process
+--end fsm
+-- 
+-- 
+-- 
+-- 
