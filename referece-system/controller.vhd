@@ -116,7 +116,8 @@ begin
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1';
 			Mwe_ctrl <= '0';		  
-			state <= S3wait;
+			next_state <= S3wait;
+			state <= WAIT_STATE;
 		when S3wait =>
 			current_state <= x"c3";
 			state <= S3a;
