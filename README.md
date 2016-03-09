@@ -23,3 +23,9 @@ editor and then clicking the "Quartus" radio button.
 ### Getting a Simple Program to Run
 
 With the new M9K memory module it takes one clock cycle longer to read from memory than the memory implemented in memory.vhd. So two new states were added: S1wait, to wait on fetch instruction, and S11wait, to wait for memory output. **The fibonacci program does not work right yet though.** It seems to be the JUMP instruction that isn't working.
+
+### Timing of M9K memory for reading
+
+To read from the m9k memory takes one more clock cycle than it does in the memory of the provided architecture.
+![M9K memory](https://raw.githubusercontent.com/davejmurphy/cache-project/master/m9k_sim.PNG?token=AGFDIxUzVx8qfR9N9X3kv4ObQsWfYIE-ks5W6W1TwA%3D%3D)
+![Castillos memory](https://raw.githubusercontent.com/davejmurphy/cache-project/master/castillo_mem_sim.PNG?token=AGFDI-Ijfs7xhMDHU0pbmbwHNoPhzm6Cks5W6W0_wA%3D%3D)
