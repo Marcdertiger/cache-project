@@ -40,8 +40,8 @@ end controller;
 
 architecture fsm of controller is
 
-  type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE);
+  type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -79,11 +79,8 @@ begin
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
-			next_state <= S1wait;
+			next_state <= S1a;
 			state <= WAIT_STATE;
-		when S1wait =>
-			current_state <= x"C1";
-			state <= S1a;
 		when S1a => 
 			current_state <= x"A1";
 	      IRld_ctrl <= '0';
@@ -117,11 +114,8 @@ begin
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1';
 			Mwe_ctrl <= '0';		  
-			next_state <= S3wait;
+			next_state <= S3a;
 			state <= WAIT_STATE;
-		when S3wait =>
-			current_state <= x"c3";
-			state <= S3a;
 	  when S3a =>   
 			current_state <= x"A3";
 			RFwe_ctrl <= '1'; 
@@ -246,11 +240,8 @@ begin
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1'; -- read memory
 			Mwe_ctrl <= '0';
-			next_state <= S11wait;
-			state <= WAIT_STATE;		  
-		when S11wait =>
-			current_state <= x"CB";
-			state <= S11a;
+			next_state <= S11a;
+			state <= WAIT_STATE;	
 	  when S11a =>  
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 

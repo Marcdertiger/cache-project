@@ -113,7 +113,7 @@ Unit1: CPU port map (
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
 Unit2: memory_4KB port map(
-	mem_addr,
+	mem_address_cheat,
 	mem_clk_en,
 	sys_clk_div,
 	mdin_bus,

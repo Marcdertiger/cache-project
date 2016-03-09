@@ -42,7 +42,7 @@ USE altera_mf.all;
 ENTITY memory_4KB IS
 	PORT
 	(
-		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		address		: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -79,7 +79,7 @@ ARCHITECTURE SYN OF memory_4kb IS
 		width_byteena_a		: NATURAL
 	);
 	PORT (
-			address_a	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+			address_a	: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 			clock0	: IN STD_LOGIC ;
 			data_a	: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 			wren_a	: IN STD_LOGIC ;
@@ -100,14 +100,14 @@ BEGIN
 		intended_device_family => "Cyclone IV E",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
-		numwords_a => 256,
+		numwords_a => 4096,
 		operation_mode => "SINGLE_PORT",
 		outdata_aclr_a => "NONE",
 		outdata_reg_a => "CLOCK0",
 		power_up_uninitialized => "FALSE",
 		ram_block_type => "M9K",
 		read_during_write_mode_port_a => "NEW_DATA_NO_NBE_READ",
-		widthad_a => 8,
+		widthad_a => 12,
 		width_a => 16,
 		width_byteena_a => 1
 	)

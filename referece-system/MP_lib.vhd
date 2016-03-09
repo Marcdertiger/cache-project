@@ -107,7 +107,7 @@ end component;
 component memory_4KB is
 	PORT
 	(
-		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		address	: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC  := '1';
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
