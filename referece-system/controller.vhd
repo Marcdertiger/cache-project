@@ -15,6 +15,7 @@ use work.MP_lib.all;
 
 entity controller is
 port(	clock:		in std_logic;
+	mem_ready: 	in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -40,11 +41,11 @@ end controller;
 architecture fsm of controller is
 
   type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait);
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE);
   signal state: state_type;
-	
+	signal next_state: state_type;
 begin
-  process(clock, rst, IR_word)
+  process(clock, rst, IR_word, mem_ready)
     variable OPCODE: std_logic_vector(3 downto 0);
   begin
     if rst='1' then			   
@@ -77,7 +78,8 @@ begin
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
-			state <= S1wait;
+			next_state <= S1wait;
+			state <= WAIT_STATE;
 		when S1wait =>
 			current_state <= x"C1";
 			state <= S1a;
@@ -248,6 +250,10 @@ begin
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
+		when WAIT_STATE =>
+			if (mem_ready = '1') then
+				state <= next_state;
+			end if;
 		
 	  when others =>
 	end case;

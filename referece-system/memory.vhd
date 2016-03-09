@@ -19,7 +19,8 @@ port ( 	clock	: 	in std_logic;
 		Mwe		:	in std_logic;
 		address	:	in std_logic_vector(7 downto 0);
 		data_in	:	in std_logic_vector(15 downto 0);
-		data_out:	out std_logic_vector(15 downto 0)
+		data_out:	out std_logic_vector(15 downto 0);
+		mem_ready: out std_logic
 );
 end memory;
 
@@ -59,7 +60,7 @@ begin
 						23 => x"F000",			-- halt
 						others => x"0000");
 		else
-			if (clock'event and clock = '1') then
+			if (clock'event and clock = '1') then					
 				if (Mwe ='1' and Mre = '0') then
 					tmp_ram(conv_integer(address)) <= data_in;
 				end if;

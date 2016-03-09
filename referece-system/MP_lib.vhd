@@ -26,6 +26,7 @@ constant readm  : std_logic_vector(3 downto 0) := "0111";
 component CPU is
 port (	
 		cpu_clk					: in std_logic;
+		mem_ready: 	in std_logic;
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 
@@ -71,6 +72,7 @@ end component;
 component controller is
 port(	
 	clock:		in std_logic;
+	mem_ready: 	in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -123,7 +125,8 @@ port (
 	Mwe		:	in std_logic;
 	address	:	in std_logic_vector(7 downto 0);
 	data_in	:	in std_logic_vector(15 downto 0);
-	data_out:	out std_logic_vector(15 downto 0)
+	data_out:	out std_logic_vector(15 downto 0);
+	mem_ready: out std_logic
 );
 end component;
 
@@ -176,6 +179,7 @@ end component;
 component ctrl_unit is
 port(
 	clock_cu:	in 	std_logic;
+	mem_ready: 	in std_logic;
 	rst_cu:		in 	std_logic;
 	PCld_cu:	in 	std_logic;
 	mdata_out: 	in 	std_logic_vector(15 downto 0);

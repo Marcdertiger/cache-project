@@ -6,7 +6,8 @@ force mem_clk_en 1
 add wave sys_clk
 add wave sys_rst
 add wave sys_output
-add wave mem_clk_en
+add wave sys_clk_div
+add wave D_mem_ready
 add wave D_mem_addr
 add wave D_mdout_bus
 add wave D_mdin_bus

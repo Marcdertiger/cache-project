@@ -50,7 +50,9 @@ port( sys_clk							:	in std_logic;
 		D_rf_12						: out std_logic_vector(15 downto 0);
 		D_rf_13						: out std_logic_vector(15 downto 0);
 		D_rf_14						: out std_logic_vector(15 downto 0);
-		D_rf_15						: out std_logic_vector(15 downto 0)
+		D_rf_15						: out std_logic_vector(15 downto 0);
+		
+		D_mem_ready					: out std_logic
 
 		-- end debug variables	
 );
@@ -66,6 +68,7 @@ architecture rtl of SimpleCompArch is
 	signal mem_address_cheat : std_logic_vector(11 downto 0);
 	signal current_state			: std_logic_vector(7 downto 0);
 	signal IR_word				:	std_logic_vector(15 downto 0);
+	signal mem_ready			:	std_logic;
 	--System local variables
 	signal oe							: std_logic;
 	signal rf_tmp				: rf_type;
@@ -81,16 +84,21 @@ architecture rtl of SimpleCompArch is
 			count <= 0;
 			sys_clk_div <= '0';
 		elsif (rising_edge(sys_clk)) then
+			mem_ready <= '0';
 			count <= count + 1;
 			if (count = 3) then 
 				sys_clk_div <= NOT sys_clk_div;
 				count <= 0;
+				if (sys_clk_div = '0') then
+					mem_ready <= '1';
+				end if;
 			end if;
 		end if;
 	end process;
 
 Unit1: CPU port map (
 	sys_clk,
+	mem_ready,
 	sys_rst,
 	mdout_bus,
 	mdin_bus,
@@ -104,16 +112,16 @@ Unit1: CPU port map (
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
-Unit2: memory_4KB port map(
-	mem_addr,
-	mem_clk_en,
-	sys_clk,
-	mdin_bus,
-	Mre,
-	Mwe,
-	mdout_bus);
+--Unit2: memory_4KB port map(
+	--mem_addr,
+	--mem_clk_en,
+	--sys_clk,
+	--mdin_bus,
+	--Mre,
+	--Mwe,
+	--mdout_bus);
 																					
---Unit2: memory port map(	sys_clk,sys_rst,Mre,Mwe,mem_addr,mdin_bus,mdout_bus);
+Unit2: memory port map(	sys_clk_div,sys_rst,Mre,Mwe,mem_addr,mdin_bus,mdout_bus);
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
 -- Debug signals: output to upper level for simulation purpose only
@@ -143,6 +151,8 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_rf_12 <= rf_tmp(12);
 	D_rf_13 <= rf_tmp(13);	
 	D_rf_14 <= rf_tmp(14);	
-	D_rf_15 <= rf_tmp(15);	
+	D_rf_15 <= rf_tmp(15);
+	
+	D_mem_ready <= mem_ready;
 		
 end rtl;
