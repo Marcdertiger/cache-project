@@ -26,7 +26,7 @@ constant readm  : std_logic_vector(3 downto 0) := "0111";
 component CPU is
 port (	
 		cpu_clk					: in std_logic;
-		mem_ready: 	in std_logic;
+		mem_ready				: in std_logic;
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 

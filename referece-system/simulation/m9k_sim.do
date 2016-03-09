@@ -12,6 +12,7 @@ add wave D_mem_addr
 add wave D_mdout_bus
 add wave D_mdin_bus
 add wave D_Mre
+add wave D_Mwe
 add wave D_PCld
 add wave D_oe
 add wave D_current_state

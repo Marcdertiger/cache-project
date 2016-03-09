@@ -143,7 +143,8 @@ begin
 			current_state <= x"A4";
 			Mre_ctrl <= '0';
 			Mwe_ctrl <= '1';
-			state <= S4b;			-- write into memory
+			next_state <= S4b;
+			state <= WAIT_STATE; -- write into memory
 	  when S4b =>   
 			current_state <= x"B4";
 			Ms_ctrl <= "10";				  
@@ -163,7 +164,8 @@ begin
 			current_state <= x"A5";
 			Mre_ctrl <= '0';			
 			Mwe_ctrl <= '1'; -- write into memory
-			state <= S5b;
+			next_state <= S5b;
+			state <= WAIT_STATE;
 	  when S5b => 	
 			current_state <= x"B5";
 			Ms_ctrl <= "10";-- return
