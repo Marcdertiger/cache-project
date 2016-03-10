@@ -110,17 +110,17 @@ component memory_4KB is
 		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 end component;
-
-component memory is
-port ( 	
-	clock	: 	in std_logic;
-	rst		: 	in std_logic;
-	Mre		:	in std_logic;
-	Mwe		:	in std_logic;
-	address	:	in std_logic_vector(7 downto 0);
-	data_in	:	in std_logic_vector(15 downto 0);
-	data_out:	out std_logic_vector(15 downto 0)
-);
+component cache_controller is
+	PORT
+	(
+		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		clken		: IN STD_LOGIC  := '1';
+		clock		: IN STD_LOGIC;
+		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		rden		: IN STD_LOGIC  := '1';
+		wren		: IN STD_LOGIC ;
+		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+	);
 end component;
 
 component obuf is
