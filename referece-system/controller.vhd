@@ -41,7 +41,7 @@ end controller;
 architecture fsm of controller is
 
   type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE);
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE,S12,S12a,S12b,S13,S13a,S13b);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -104,6 +104,8 @@ begin
 			    when jz =>		state <= S9;
 			    when halt =>	state <= S10; 
 			    when readm => 	state <= S11;
+				 when mov5 =>	state <= S12;
+				 when jz25 =>  state <= S13;
 			    when others => 	state <= S1;
 			    end case;
 					
@@ -157,8 +159,8 @@ begin
 			state <= S5a;
 	  when S5a =>   
 			current_state <= x"A5";
-			Mre_ctrl <= '0';			
-			Mwe_ctrl <= '1'; -- write into memory
+			Mre_ctrl <= '1';-- read memory 			
+			Mwe_ctrl <= '0'; 
 			next_state <= S5b;
 			state <= WAIT_STATE;
 	  when S5b => 	
@@ -238,7 +240,7 @@ begin
 	  when S11 =>   
 			current_state <= x"0B";
 			Ms_ctrl <= "01";
-			Mre_ctrl <= '1'; -- read memory
+			Mre_ctrl <= '1'; -- | now write to R2 instead of memory 
 			Mwe_ctrl <= '0';
 			next_state <= S11a;
 			state <= WAIT_STATE;	
@@ -246,7 +248,8 @@ begin
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
-		-- A 
+	
+	-- A 
 		when WAIT_STATE =>	
 			if (mem_ready = '1') then
 				count <= count + 1;
@@ -255,6 +258,52 @@ begin
 					count <= 0;
 				end if;
 			end if;
+		
+		
+		-- this should do : RF <= mem[RF[rm]] (inverse of MOV3)
+		-- copied mov3 code as a starting point
+		-- does not work( 10/03/2016 4:45pm ) 
+		when S12 =>	
+			current_state <= x"0C";
+			RFr1a_ctrl <= IR_word(11 downto 8);	
+			RFr1e_ctrl <= '1'; -- RF[rn] <= mem[RF[rm]]
+			Ms_ctrl <= "00";
+			ALUs_ctrl <= "01";
+			RFr2a_ctrl <= IR_word(7 downto 4); 
+			RFr2e_ctrl <= '1'; -- set addr.& data
+			state <= S12a;
+	  when S12a =>   
+			current_state <= x"AB";
+			RFs_ctrl <= "00";
+			RFwa_ctrl <= IR_word(11 downto 8);
+			RFwe_ctrl <= '1';
+			next_state <= S12b;
+			state <= WAIT_STATE;	
+	  when S12b => 	
+			current_state <= x"BB";
+			Ms_ctrl <= "10";-- return
+			Mwe_ctrl <= '0';
+			state <= S1;
+		
+		-- this should jump only if register 
+		-- copied jz code as a starting point
+		-- does not work( 10/03/2016 3:45pm ) 
+		when S13 =>	
+			current_state <= x"0D";
+			jmpen_ctrl <= '1';
+			RFr1a_ctrl <= IR_word(11 downto 8);	
+			RFr1e_ctrl <= '1'; -- jz if R[rn] = 0
+			ALUs_ctrl <= "00";
+			state <= S13a;
+	  when S13a =>   
+			current_state <= x"AD";
+			state <= S13b;
+	  when S13b =>   
+			current_state <= x"BD";
+			jmpen_ctrl <= '0';
+	      state <= S1;
+		
+		
 		
 	  when others =>
 	end case;
