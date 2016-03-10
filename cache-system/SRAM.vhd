@@ -13,7 +13,8 @@ use ieee.std_logic_unsigned.all;
 use work.MP_lib.all;
 
 entity sram is
-port ( 	clock	: 	in std_logic;
+port ( 	
+		clock	: 	in std_logic;
 		rst		: 	in std_logic;
 		Mre		:	in std_logic;
 		Mwe		:	in std_logic;
@@ -33,8 +34,8 @@ signal cache : cache_type;
 
 begin
 	write: process(clock, rst, Mre, tag, word, data_in)
-	begin							-- program to generate the first 15 coeff. of the  equation y(n) = 2x(n) + y(n-1) - y(n-2)	 
-		if rst='1' then		-- x=2,3,...,12,13,14, y(0)=1 andy(1)=3.
+	begin						
+		if rst='1' then		
 			cache(0) <= (
 				1 => x"1FEB",
 				others => x"0000");
@@ -45,12 +46,12 @@ begin
 			cache(5) <= (others => x"0000");
 			cache(6) <= (others => x"0000");
 			cache(7) <= (others => x"0000");
-		--else
-			--if (clock'event and clock = '1') then
-				--if (Mwe ='1' and Mre = '0') then
-					--tmp_ram(conv_integer(address)) <= data_in;
-				--end if;
-			--end if;
+--		else
+--			if (clock'event and clock = '1') then
+--				if (Mwe ='1' and Mre = '0') then
+--					cache(conv_integer(tag))(conv_integer(word)) <= data_in;
+--				end if;
+--			end if;
 		end if;
 	end process;
 
