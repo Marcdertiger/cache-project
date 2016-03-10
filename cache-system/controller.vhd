@@ -39,7 +39,7 @@ end controller;
 
 architecture fsm of controller is
 
-  type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
+  type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
 			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait);
   signal state: state_type;
 	
@@ -119,6 +119,8 @@ begin
 			current_state <= x"A3";
 			RFwe_ctrl <= '1'; 
 	      Mre_ctrl <= '0'; 
+			state <= S3wait;
+	  when S3wait =>
 			state <= S3b;
 	  when S3b => 	
 			current_state <= x"B3";

@@ -42,16 +42,15 @@ USE altera_mf.all;
 ENTITY memory_4KB IS
 	PORT
 	(
-		address		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
-		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
 END memory_4KB;
-
 
 ARCHITECTURE SYN OF memory_4kb IS
 
