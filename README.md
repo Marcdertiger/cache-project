@@ -40,8 +40,11 @@ http://download.intel.com/design/intarch/papers/cache6.pdf
 The program is written asusming we have access to move the value from memory to a register (inverse of MOV3 operation). It also relies on a branch op code that only banches while we have not added all 25 elements of the 5x5 matrices.
 
 mem[0..50] reserved for the program operations.
+
 mem[50..74] matrix 0.
+
 mem[75..99] matrix 1.
+
 mem[100..124] matrix additon result.
 
 Matrices are stored in memory one column after the other. 
