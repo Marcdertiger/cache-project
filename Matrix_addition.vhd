@@ -2,7 +2,7 @@
 
 -- Addition of two 5x5 matrices
 
--- addition of two new op codes was implemented : 1. M[Rx] -> Rb  2. Rx<IMM: PC<-Rb (if register "0R00" < 25, jump to instruction # "00II")
+-- addition of two new op codes was implemented : 1. M[Rx] -> Rb  2. Rx>24: PC<-Rb (if register "0R00" > 24, jump to instruction # "00II")
 
 
 -- matrix addition. result found in memory location mem[70]..mem[94]
