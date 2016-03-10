@@ -26,53 +26,138 @@ use work.MP_lib.all;
 ENTITY cache_controller IS
 	PORT
 	(
-		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		mem_read : IN STD_LOGIC;
+		address	: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
-		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)	
+		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+		
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
+		
+		D_TRAM_data_out : out std_logic_vector(2 downto 0);
+		D_TRAM_tag : out std_logic_vector(9 downto 0);
+		D_SRAM_output_data : out STD_LOGIC_VECTOR (15 DOWNTO 0);
+		D_current_state : out std_logic_vector(3 downto 0);
+		
+		D_tag_table_0 : out std_logic_vector(9 downto 0);
+		D_tag_table_1 : out std_logic_vector(9 downto 0);
+		D_tag_table_2 : out std_logic_vector(9 downto 0);
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0)
 		
 	);
 END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1);
+type state_type is ( S0,S1,S2);
   signal state: state_type;
-  
+signal TRAM_read : std_logic;
+signal TRAM_write : std_logic;
+signal TRAM_tag : std_logic_vector(9 downto 0);
+signal TRAM_data_out : std_logic_vector(2 downto 0);
+signal SRAM_read  : std_logic;
+signal SRAM_write  : std_logic;
+signal SRAM_word  : std_logic_vector(1 downto 0);
+
+signal main_memory : std_logic_vector(7 downto 0);
+
+signal SRAM_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
+signal MAIN_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
+
   
 begin
- 
- 
- 
---	--process (clock, enable?, address)
--- 
--- 
--- 
---	when S0 ->
---		--check if there is a hit or a miss
---		--then go to s1 or s2 
---		
---		
---	when S1 -> there is a hit
---
---
---
---	when S2 -> no hit
---
---
---	end process
+
+process (clock,reset, address)
+begin
+	if reset='1' then
+		TRAM_read  <= '0';
+		TRAM_write <= '0';
+		TRAM_tag <= "0000000000";
+		state <= S0;
+
+   elsif (clock'event and clock='1' and mem_read = '1') then
+	case state is 
+	when S0 =>
+		D_current_state <= x"0";
+		--check if there is a hit or a miss
+		--then go to s1 or s2
+		--
+		--read from tag_table in TRAM
+		TRAM_read  <= '1';
+		TRAM_write <= '0';
+		TRAM_tag <= address;
+		state <= S1;
+		
+		
+		
+	when S1 => --there is a hit
+		D_current_state <= x"1";
+		SRAM_read  <= '1';
+		SRAM_write <= '0';
+		SRAM_word  <= "01"; --HARD CODED FOR NOW
+		
+		--shut off read
+		TRAM_read  <= '0';
+		TRAM_write <= '0';
+
+		state <= S2;
+	when S2 =>
+		D_current_state <= x"2";
+		q <= SRAM_output_data;
+		state <= S0;
+		
+	when others =>
+	end case;
+	end if;
+	end process;
 
 Unit1: memory_4KB port map(
-	address,
+	main_memory,
 	clken,
 	clock,
 	data,
 	rden,
 	wren,
-	q);
+	MAIN_output_data);
+
+Unit2: TRAM port map(
+		clock,
+		reset,
+		TRAM_read,
+		TRAM_write,
+		TRAM_tag,
+		TRAM_data_out,
+		D_FIFO_Index,
+		D_tag_table_0,
+		D_tag_table_1,
+		D_tag_table_2,
+		D_tag_table_3,
+		D_tag_table_4,
+		D_tag_table_5,
+		D_tag_table_6,
+		D_tag_table_7);
+	
+Unit3: SRAM port map(	
+		clock,
+		reset,
+		SRAM_read,
+		SRAM_write,
+		SRAM_word,
+		TRAM_data_out,
+		data,
+		SRAM_output_data);
+		
+		D_TRAM_data_out <= TRAM_data_out;
+		D_SRAM_output_data <= SRAM_output_data;
+		D_TRAM_tag <= TRAM_tag;
 
 end fsm;
  

@@ -37,21 +37,23 @@ begin
 	begin						
 		if rst='1' then		
 			cache(0) <= (
-				1 => x"1FEB",
+				1 => x"5678",
 				others => x"0000");
 			cache(1) <= (others => x"0000");
-			cache(2) <= (others => x"0000");
+			cache(2) <= (
+				1 => x"1FEB",
+				others => x"0000");
 			cache(3) <= (others => x"0000");
 			cache(4) <= (others => x"0000");
 			cache(5) <= (others => x"0000");
 			cache(6) <= (others => x"0000");
 			cache(7) <= (others => x"0000");
---		else
---			if (clock'event and clock = '1') then
---				if (Mwe ='1' and Mre = '0') then
---					cache(conv_integer(tag))(conv_integer(word)) <= data_in;
---				end if;
---			end if;
+		else
+			if (clock'event and clock = '1') then
+				if (Mwe ='1' and Mre = '0') then
+					cache(conv_integer(tag))(conv_integer(word)) <= data_in;
+				end if;
+			end if;
 		end if;
 	end process;
 

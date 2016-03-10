@@ -23,6 +23,7 @@ constant readm  : std_logic_vector(3 downto 0) := "0111";
 component CPU is
 port (	
 		cpu_clk					: in std_logic;
+		mem_read					: in std_logic;
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 
@@ -67,6 +68,7 @@ end component;
 component controller is
 port(	
 	clock:		in std_logic;
+	mem_ready: 	in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -113,7 +115,9 @@ end component;
 component cache_controller is
 	PORT
 	(
+		mem_read : IN STD_LOGIC;
 		address	: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC;
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -121,6 +125,40 @@ component cache_controller is
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 	);
+end component;
+component TRAM is
+port ( 	
+		clock		: 	in std_logic;
+		rst		: 	in std_logic;
+		Mre		:	in std_logic;
+		Mwe		:	in std_logic;
+		tag 		: 	in std_logic_vector(9 downto 0);
+		data_out :	out std_logic_vector(2 downto 0);
+		
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
+		
+		D_tag_table_0 : out std_logic_vector(9 downto 0);
+		D_tag_table_1 : out std_logic_vector(9 downto 0);
+		D_tag_table_2 : out std_logic_vector(9 downto 0);
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component SRAM is
+port ( 	
+		clock	: 	in std_logic;
+		rst		: 	in std_logic;
+		Mre		:	in std_logic;
+		Mwe		:	in std_logic;
+		word	:	in std_logic_vector(1 downto 0);
+		tag 	: 	in std_logic_vector(2 downto 0);
+		data_in	:	in std_logic_vector(15 downto 0);
+		data_out:	out std_logic_vector(15 downto 0)
+);
 end component;
 
 component obuf is
@@ -171,6 +209,7 @@ end component;
 component ctrl_unit is
 port(
 	clock_cu:	in 	std_logic;
+	mem_ready	: in std_logic;
 	rst_cu:		in 	std_logic;
 	PCld_cu:	in 	std_logic;
 	mdata_out: 	in 	std_logic_vector(15 downto 0);

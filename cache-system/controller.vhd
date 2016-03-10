@@ -15,6 +15,7 @@ use work.MP_lib.all;
 
 entity controller is
 port(	clock:		in std_logic;
+	mem_ready: 	in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -39,12 +40,13 @@ end controller;
 
 architecture fsm of controller is
 
-  type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait);
+  type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE);
   signal state: state_type;
-	
+	signal next_state: state_type;
+	signal count : integer:=0;
 begin
-  process(clock, rst, IR_word)
+  process(clock, rst, IR_word, mem_ready)
     variable OPCODE: std_logic_vector(3 downto 0);
   begin
     if rst='1' then			   
@@ -69,18 +71,16 @@ begin
 	  when S1 =>	PCinc_ctrl <= '0';
 			current_state <= x"01"; 
 			IRld_ctrl <= '1'; -- Fetch Instruction
-			Mre_ctrl <= '1';  
-			RFwe_ctrl <= '0'; 
-			RFr1e_ctrl <= '0'; 
-			RFr2e_ctrl <= '0'; 
+			Mre_ctrl <= '1';
+			RFwe_ctrl <= '0';
+			RFr1e_ctrl <= '0';
+			RFr2e_ctrl <= '0';
 			Ms_ctrl <= "10";
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
-			state <= S1wait;
-		when S1wait =>
-			current_state <= x"C1";
-			state <= S1a;
+			next_state <= S1a;
+			state <= WAIT_STATE;
 		when S1a => 
 			current_state <= x"A1";
 	      IRld_ctrl <= '0';
@@ -114,13 +114,12 @@ begin
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1';
 			Mwe_ctrl <= '0';		  
-			state <= S3a;
+			next_state <= S3a;
+			state <= WAIT_STATE;
 	  when S3a =>   
 			current_state <= x"A3";
 			RFwe_ctrl <= '1'; 
 	      Mre_ctrl <= '0'; 
-			state <= S3wait;
-	  when S3wait =>
 			state <= S3b;
 	  when S3b => 	
 			current_state <= x"B3";
@@ -139,7 +138,8 @@ begin
 			current_state <= x"A4";
 			Mre_ctrl <= '0';
 			Mwe_ctrl <= '1';
-			state <= S4b;			-- write into memory
+			next_state <= S4b;
+			state <= WAIT_STATE; -- write into memory
 	  when S4b =>   
 			current_state <= x"B4";
 			Ms_ctrl <= "10";				  
@@ -159,7 +159,8 @@ begin
 			current_state <= x"A5";
 			Mre_ctrl <= '0';			
 			Mwe_ctrl <= '1'; -- write into memory
-			state <= S5b;
+			next_state <= S5b;
+			state <= WAIT_STATE;
 	  when S5b => 	
 			current_state <= x"B5";
 			Ms_ctrl <= "10";-- return
@@ -238,15 +239,22 @@ begin
 			current_state <= x"0B";
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1'; -- read memory
-			Mwe_ctrl <= '0';		  
-			state <= S11wait;
-		when S11wait =>
-			current_state <= x"CB";
-			state <= S11a;
+			Mwe_ctrl <= '0';
+			next_state <= S11a;
+			state <= WAIT_STATE;	
 	  when S11a =>  
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
+		-- A 
+		when WAIT_STATE =>	
+			if (mem_ready = '1') then
+				count <= count + 1;
+				if (count = 1) then
+					state <= next_state;
+					count <= 0;
+				end if;
+			end if;
 		
 	  when others =>
 	end case;

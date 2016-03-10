@@ -14,6 +14,7 @@ use work.MP_lib.all;
 
 entity CPU is
 port( cpu_clk					: in std_logic;
+		mem_ready				: in std_logic;
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 
@@ -52,7 +53,7 @@ signal jpz_s					: std_logic;												-- Jump check flag					(CTRLER 	-> ALU)
 
 begin
 	mem_addr <= addr_bus(7 downto 0); 
-	Unit0: ctrl_unit port map(	cpu_clk,cpu_rst,PCld_s,mdout_bus,rfout_bus,addr_bus,immd_bus, RFs_s,
+	Unit0: ctrl_unit port map(	cpu_clk,mem_ready,cpu_rst,PCld_s,mdout_bus,rfout_bus,addr_bus,immd_bus, RFs_s,
 								RFwa_s,RFr1a_s,RFr2a_s,RFwe_s,RFr1e_s,RFr2e_s,jpz_s,ALUs_s,Mre_s,Mwe_s,oe_s,current_state,IR_word);
 	Unit1: datapath port map( cpu_clk,cpu_rst,immd_bus,mdout_bus, RFs_s,RFwa_s,RFr1a_s,
 								RFr2a_s,RFwe_s,RFr1e_s,RFr2e_s,jpz_s,ALUs_s,PCld_s,rfout_bus, mdin_bus);

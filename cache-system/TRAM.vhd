@@ -84,9 +84,9 @@ begin
 					if tag_table(index) = tag then
 						data_out <= std_logic_vector(to_unsigned(index, data_out'length));
 					end if;
-				end loop;
+				end loop;				
 			end if;
-		end if;
+		end if;		
 	end process;
 	
 	D_FIFO_Index <= std_logic_vector(to_unsigned(FIFO_Index, D_FIFO_Index'length));

@@ -49,6 +49,7 @@ architecture rtl of SimpleCompArch is
 	signal mem_address_cheat : std_logic_vector(11 downto 0);
 	signal current_state			: std_logic_vector(7 downto 0);
 	signal IR_word				:	std_logic_vector(15 downto 0);
+	signal mem_ready: 	std_logic;
 	--System local variables
 	signal oe							: std_logic;
 	
@@ -73,6 +74,7 @@ architecture rtl of SimpleCompArch is
 
 Unit1: CPU port map (
 	sys_clk,
+	mem_ready,
 	sys_rst,
 	mdout_bus,
 	mdin_bus,
@@ -86,7 +88,9 @@ Unit1: CPU port map (
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
 Unit2: cache_controller port map(
+	mem_ready,
 	mem_addr,
+	sys_rst,
 	mem_clk_en,
 	sys_clk,
 	mdin_bus,
