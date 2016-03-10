@@ -48,7 +48,7 @@ architecture behv of tram	 is
 type tag_type is array (7 downto 0) of std_logic_vector(9 downto 0);
 
 signal tag_table : tag_type;
-signal FIFO_Index : std_logic_vector(2 downto 0) := "000";
+signal FIFO_Index : integer := 0;
 
 begin
 	write: process(clock, rst, Mre, tag)
@@ -57,16 +57,18 @@ begin
 			tag_table <= (
 				0 => "0000000000",
 				2 => "1111111111",
+				7 => "1100110001",
 				others => "0000000000"
 			);
+			FIFO_Index <= 0;
 		elsif (clock'event and clock = '1') then
 				if (Mwe ='1' and Mre = '0') then
-					if (conv_integer(FIFO_Index) < 8) then 
-						tag_table(conv_integer(FIFO_Index)) <= tag;
-						FIFO_Index <= FIFO_Index + 1;
+					if (FIFO_Index = 8) then 
+						tag_table(0) <= tag;
+						FIFO_Index <= 1;
 					else 
-						tag_table(conv_integer(0)) <= tag;
-						FIFO_Index <= "001";
+						tag_table(FIFO_Index) <= tag;
+						FIFO_Index <= FIFO_Index + 1;						
 					end if;
 				end if;
 		end if;
@@ -87,7 +89,7 @@ begin
 		end if;
 	end process;
 	
-	D_FIFO_Index <= FIFO_Index;
+	D_FIFO_Index <= std_logic_vector(to_unsigned(FIFO_Index, D_FIFO_Index'length));
 	
 	D_tag_table_0 <= tag_table(0);
 	D_tag_table_1 <= tag_table(1);
