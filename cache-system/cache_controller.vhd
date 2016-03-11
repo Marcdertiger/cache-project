@@ -66,6 +66,7 @@ signal TRAM_data_out : std_logic_vector(2 downto 0);
 signal SRAM_read  : std_logic;
 signal SRAM_write  : std_logic;
 signal SRAM_word  : std_logic_vector(1 downto 0);
+signal current_state : std_logic_vector(3 downto 0);
 
 signal main_memory : std_logic_vector(7 downto 0);
 
@@ -86,7 +87,7 @@ begin
    elsif (clock'event and clock='1' and mem_read = '1') then
 	case state is 
 	when S0 =>
-		D_current_state <= x"0";
+		current_state <= x"0";
 		--check if there is a hit or a miss
 		--then go to s1 or s2
 		--
@@ -99,7 +100,7 @@ begin
 		
 		
 	when S1 => --there is a hit
-		D_current_state <= x"1";
+		current_state <= x"1";
 		SRAM_read  <= '1';
 		SRAM_write <= '0';
 		SRAM_word  <= "01"; --HARD CODED FOR NOW
@@ -110,8 +111,12 @@ begin
 
 		state <= S2;
 	when S2 =>
-		D_current_state <= x"2";
+		current_state <= x"2";
 		q <= SRAM_output_data;
+		
+		--shut off read
+		SRAM_read  <= '0';
+		SRAM_write <= '0';
 		state <= S0;
 		
 	when others =>
@@ -158,6 +163,7 @@ Unit3: SRAM port map(
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;
 		D_TRAM_tag <= TRAM_tag;
+		D_current_state <= current_state;
 
 end fsm;
  
