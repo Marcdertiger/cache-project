@@ -2,37 +2,44 @@
 
 -- Addition of two 5x5 matrices
 
-<<<<<<< HEAD
--- addition of two new op codes was implemented : 1. M[Rx] -> Rb  2. Rx>24: PC<-Rb (if register "0R00" < 25, jump to instruction # "00II")
-=======
--- addition of two new op codes was implemented : 1. M[Rx] -> Rb  2. Rx>24: PC<-Rb (if register "0R00" > 24, jump to instruction # "00II")
->>>>>>> 342b9f3e7a9cf104b8c8257936178c17238a1981
-
 
 -- matrix addition. result found in memory location mem[70]..mem[94]
-		(starts adding from top left corner then goes top-down following the columns)
+--		(starts adding from top left corner then goes top-down following the columns)
+
+
 
 
 		
-		-- space for loop mem[0..49]
+		-- space for program mem[0..49]
 		
 0 =>  x"3000",		-- R0 = 0   (Start-up value of program counter)
-1 =>  x"3150",		-- R1 = 50	 (position of first element of matrix 0)
-2 =>  x"3275",		-- R2 = 75	 (position of first element of matrix 1)
-3 =>  x"3301",		-- R3 = 1	 (increment by 1)
-4 =>  x"3464",		-- R4 = 100	(position of first element of matrix 2 (result matrix))
+1 =>  x"3132",		-- R1 = 50	 (position of first element of matrix a)
+2 =>  x"324B",		-- R2 = 75	 (position of first element of matrix b)
+3 =>  x"3301",		-- R3 = 1	 (constant increment by 1)
+4 =>  x"3464",		-- R4 = 100	(position of first element of matrix c (result matrix))
 
-5=>  x"1145",		-- M[45] <- R0 (M[45] is the position of matrix 0 pointer)				M[45]=50
-6=>  x"1246",		-- M[46] <- R1 (M[46] is the position of matrix 1 pointer)				M[46]=75
-7=>  x"1047",		-- M[45] <- R0 (M[47] is the program counter, loop exits at 25 runs)	M[47]=0
+5=>  x"112D",		-- M[45] <- R0 (M[45] is the position of matrix 0 pointer)				M[45]=50
+6=>  x"1242E",		-- M[46] <- R1 (M[46] is the position of matrix 1 pointer)				M[46]=75
+7=>  x"102F",		-- M[45] <- R0 (M[47] is the program counter, loop exits at 25 runs)	M[47]=0
 
-8=>  x"8160",		-- R6    <- M[R1] (matrix 0 current element copied in R6)
-9=>  x"8270",		-- R7    <- M[R2] (matrix 0 current element copied in R7)
-10=> x"4678",		-- R8    <- R6 + R7
-11=> x"2480",		-- M[R4] <- R8
+--loop begining
+	8=>  x"8160",		-- R6    <- M[R1] (matrix 0 current element copied in R6)
+	9=>  x"8270",		-- R7    <- M[R2] (matrix 0 current element copied in R7)
+	10=> x"4678",		-- R8    <- R6 + R7
+	11=> x"2480",		-- M[R4] <- R8 (R4 is matrix c pointer location)
 
-12=> x"9008",		-- R0>25: PC<- #8
 
+	--increment pointers
+	12=> x"4030",		-- increment program counter
+	13=> x"4131",		-- increment matrix a pointer
+	14=> x"4232",		-- increment matrix b pointer
+	15=> x"4434",		-- increment matrix c pointer
+
+	16=> x"9008",		-- R0>25: PC<- #8  (0..24 = 25 operations done)
+--loop end
+
+
+17=> x"F000",		-- HALT
 
 -- output values here, not written yet (will do once op codes and code above works)
 
@@ -43,14 +50,7 @@
 
 
 
-
-
-
-
-
-
-
---matrix 0 (columns created from left to right)(items in columnss are created top to bottom)
+--matrix a (columns created from left to right)(items in columnss are created top to bottom)
 
 --column 0 
 
@@ -94,7 +94,7 @@
 
 
 
---matrix 2 (columns created from left to right)(items in colums are created top to bottom)
+--matrix b (columns created from left to right)(items in colums are created top to bottom)
 
 --column 0 
 
