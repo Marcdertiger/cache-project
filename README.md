@@ -48,3 +48,10 @@ mem[75..99] matrix 1.
 mem[100..124] matrix additon result.
 
 Matrices are stored in memory one column after the other. 
+
+### Cache Memory
+Have implemented a cache controller interface between the SimpleCompArch and cache memory. 
+You can do static read from cache memory.
+Current: when program counter points to 000, get F000 (static) from cache memory.
+Main memory is NOT included yet.
+
