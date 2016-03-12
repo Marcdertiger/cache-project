@@ -122,7 +122,7 @@ begin
 			--shut off read
 			TRAM_read  <= '0';
 			TRAM_write <= '0';
-
+			
 			state <= S2;
 		when S2 =>
 			current_state <= x"3";
