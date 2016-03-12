@@ -3,8 +3,8 @@ vsim work.cache_controller
 force clock 1 0, 0 100 -r 200 
 force reset 1 0, 0 400
 force clken 1
-force mem_read 0
-force address 1111111111
+force mem_read 1 0, 1 1000
+force address FFF
 add wave clock
 add wave mem_read
 add wave reset
@@ -28,4 +28,4 @@ add wave D_tag_table_7
 
 radix -hexadecimal
 
-run 10ns
+run 5ns

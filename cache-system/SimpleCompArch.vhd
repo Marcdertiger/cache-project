@@ -30,10 +30,13 @@ port( sys_clk							:	in std_logic;
 
 		-- Debug signals from Memory: output for simulation purpose only	
 		D_mdout_bus,D_mdin_bus					: out std_logic_vector(15 downto 0); 
-		D_mem_addr									: out std_logic_vector(11 downto 0); 
+		D_mem_addr									: out std_logic_vector(9 downto 0); 
 		D_Mre,D_Mwe									: out std_logic;
 		D_current_state							: out std_logic_vector(7 downto 0);
-		D_IR_word									: out std_logic_vector(15 downto 0)
+		D_IR_word									: out std_logic_vector(15 downto 0);
+		
+		D_mem_ready : out std_logic;
+		D_mem_ready_controller : out std_logic
 
 		-- end debug variables	
 );
@@ -49,9 +52,10 @@ architecture rtl of SimpleCompArch is
 	signal mem_address_cheat : std_logic_vector(11 downto 0);
 	signal current_state			: std_logic_vector(7 downto 0);
 	signal IR_word				:	std_logic_vector(15 downto 0);
-	signal mem_ready: 	std_logic;
 	--System local variables
 	signal oe							: std_logic;
+	signal mem_ready_controller 	: std_logic;
+	signal mem_ready	: std_logic;
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
@@ -84,19 +88,21 @@ Unit1: CPU port map (
 	oe,
 	current_state,
 	IR_word,
+	mem_ready_controller,
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
 Unit2: cache_controller port map(
-	mem_ready,
-	mem_addr,
+	mem_ready_controller,
+	"00"&mem_addr,
 	sys_rst,
 	mem_clk_en,
 	sys_clk,
 	mdin_bus,
 	Mre,
 	Mwe,
-	mdout_bus);
+	mdout_bus,
+	mem_ready);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -104,11 +110,13 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_oe <= oe;
 	D_mdout_bus <= mdout_bus;	
 	D_mdin_bus <= mdin_bus;
-	D_mem_addr <= mem_address_cheat; 
+	D_mem_addr <= "00"&mem_addr; 
 	D_Mre <= Mre;
 	D_Mwe <= Mwe;
 	D_current_state <= current_state;
 	D_IR_word <= IR_word;
+	D_mem_ready <= mem_ready;
+	D_mem_ready_controller <= mem_ready_controller;
 -- end debug variables		
 		
 end rtl;

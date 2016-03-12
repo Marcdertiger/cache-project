@@ -16,7 +16,7 @@ use work.MP_lib.all;
 entity ctrl_unit is
 port(	
 	clock_cu:	in std_logic;
-	mem_ready :	in std_logic;
+	mem_ready : in std_logic;
 	rst_cu:		in std_logic;
 	PCld_cu:		in std_logic;
 	mdata_out: 	in std_logic_vector(15 downto 0);
@@ -36,7 +36,8 @@ port(
 	Mwe_cu:		out std_logic;
 	oe_cu:		out std_logic;
 	current_state: out std_logic_vector(7 downto 0);
-	IR_word	: 	out std_logic_vector(15 downto 0)
+	IR_word	: 	out std_logic_vector(15 downto 0);
+	mem_ready_controller 	:	out std_logic
 );
 end ctrl_unit;
 
@@ -57,7 +58,7 @@ begin
   U0: controller port map(clock_cu,mem_ready,rst_cu,IR_sig,RFs_cu,RFwa_cu,
 			    RFr1a_cu,RFr2a_cu,RFwe_cu,RFr1e_cu,
 			    RFr2e_cu,ALUs_cu,jpen_cu,PCinc_sig,
-			    PCclr_sig,IRld_sig,Ms_sig,Mre_cu,Mwe_cu,oe_cu,current_state);
+			    PCclr_sig,IRld_sig,Ms_sig,Mre_cu,Mwe_cu,oe_cu,current_state, mem_ready_controller);
   U1: PC port map(clock_cu,PCld_cu, PCinc_sig, PCclr_sig, IR2mux_a, PC2mux);
   U2: IR port map(mdata_out, IRld_sig, IR2mux_a, IR_sig);
   U3: bigmux port map(dpdata_out,IR2mux_a,PC2mux,IR2mux_b,Ms_sig,maddr_in);

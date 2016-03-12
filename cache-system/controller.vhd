@@ -15,7 +15,7 @@ use work.MP_lib.all;
 
 entity controller is
 port(	clock:		in std_logic;
-	mem_ready: 	in std_logic;
+	mem_ready	:in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -34,7 +34,8 @@ port(	clock:		in std_logic;
 	Mre_ctrl:	out std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
-	current_state : out std_logic_vector(7 downto 0)
+	current_state : out std_logic_vector(7 downto 0);
+	mem_ready_controller: 	out std_logic
 );
 end controller;
 
@@ -46,7 +47,7 @@ architecture fsm of controller is
 	signal next_state: state_type;
 	signal count : integer:=0;
 begin
-  process(clock, rst, IR_word, mem_ready)
+  process(clock, rst, IR_word)
     variable OPCODE: std_logic_vector(3 downto 0);
   begin
     if rst='1' then			   
@@ -248,11 +249,13 @@ begin
 			state <= S1;
 		-- A 
 		when WAIT_STATE =>	
+			mem_ready_controller <= '1';
 			if (mem_ready = '1') then
 				count <= count + 1;
 				if (count = 1) then
 					state <= next_state;
 					count <= 0;
+					mem_ready_controller <= '0';
 				end if;
 			end if;
 		

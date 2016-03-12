@@ -37,11 +37,11 @@ begin
 	begin						
 		if rst='1' then		
 			cache(0) <= (
-				1 => x"5678",
+				1 => x"F000",
 				others => x"0000");
 			cache(1) <= (others => x"0000");
 			cache(2) <= (
-				1 => x"1FEB",
+				1 => x"F000",
 				others => x"0000");
 			cache(3) <= (others => x"0000");
 			cache(4) <= (others => x"0000");

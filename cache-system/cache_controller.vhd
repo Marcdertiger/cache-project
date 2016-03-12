@@ -26,7 +26,7 @@ use work.MP_lib.all;
 ENTITY cache_controller IS
 	PORT
 	(
-		mem_read : IN STD_LOGIC;
+		mem_ready_controller : IN STD_LOGIC;
 		address	: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
@@ -50,14 +50,16 @@ ENTITY cache_controller IS
 		D_tag_table_4 : out std_logic_vector(9 downto 0);
 		D_tag_table_5 : out std_logic_vector(9 downto 0);
 		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0)
+		D_tag_table_7 : out std_logic_vector(9 downto 0);
+		
+		mem_ready	: out std_logic
 		
 	);
 END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2);
+type state_type is ( S0,S1,S2, S3);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -83,18 +85,17 @@ begin
 		TRAM_write <= '0';
 		TRAM_tag <= "0000000000";
 		state <= S0;
-	elsif mem_read = '0' then
+	elsif mem_ready_controller = '0' then
 		state <= S0;
-   elsif (clock'event and clock='1' and mem_read = '1') then
+   elsif (clock'event and clock='1' and mem_ready_controller = '1') then
 		case state is 
 		when S0 =>
 			current_state <= x"0";
 			--check if there is a hit or a miss
 			--then go to s1 or s2
-			
-			SRAM_read  <= '0';
-			SRAM_write <= '0';
 			--
+			mem_ready <= '0';
+			
 			--read from tag_table in TRAM
 			TRAM_read  <= '1';
 			TRAM_write <= '0';
@@ -115,13 +116,18 @@ begin
 
 			state <= S2;
 		when S2 =>
-			current_state <= x"2";
-			q <= SRAM_output_data;
+			current_state <= x"3";
 			
---			--shut off read
---			SRAM_read  <= '0';
---			SRAM_write <= '0';
+			--shut off read
+			SRAM_read  <= '0';
+			SRAM_write <= '0';
+
+			state <= S3;
+			
+		when S3 =>
+			q <= SRAM_output_data;
 			state <= S0;
+			mem_ready <= '1';
 			
 		when others =>
 		end case;

@@ -58,7 +58,7 @@ begin
 				0 => "0000000000",
 				2 => "1111111111",
 				7 => "1100110001",
-				others => "0000000000"
+				others => "0000000001"
 			);
 			FIFO_Index <= 0;
 		elsif (clock'event and clock = '1') then
