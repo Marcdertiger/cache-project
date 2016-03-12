@@ -248,7 +248,12 @@ begin
 			oe_ctrl <= '1'; 
 			state <= S1;
 		-- A 
+		--can SAVE one clock cycle with customized 
+		-- states for each wait state.
+		-- i.e. execute the next_state when count = 1
+		--		-> no wasted clock cycles
 		when WAIT_STATE =>	
+			current_state <= x"FF";
 			mem_ready_controller <= '1';
 			if (mem_ready = '1') then
 				count <= count + 1;

@@ -86,7 +86,18 @@ begin
 		TRAM_tag <= "0000000000";
 		state <= S0;
 	elsif mem_ready_controller = '0' then
-		state <= S0;
+		current_state <= x"0";
+		--check if there is a hit or a miss
+		--then go to s1 or s2
+		--
+		mem_ready <= '0';
+		
+		--read from tag_table in TRAM
+		TRAM_read  <= '1';
+		TRAM_write <= '0';
+		TRAM_tag <= address;
+		state <= S1;
+		
    elsif (clock'event and clock='1' and mem_ready_controller = '1') then
 		case state is 
 		when S0 =>
@@ -101,8 +112,6 @@ begin
 			TRAM_write <= '0';
 			TRAM_tag <= address;
 			state <= S1;
-			
-			
 			
 		when S1 => --there is a hit
 			current_state <= x"1";
@@ -121,13 +130,13 @@ begin
 			--shut off read
 			SRAM_read  <= '0';
 			SRAM_write <= '0';
-
+			mem_ready <= '1';
 			state <= S3;
 			
 		when S3 =>
 			q <= SRAM_output_data;
 			state <= S0;
-			mem_ready <= '1';
+			
 			
 		when others =>
 		end case;

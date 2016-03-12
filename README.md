@@ -54,4 +54,8 @@ Have implemented a cache controller interface between the SimpleCompArch and cac
 You can do static read from cache memory.
 Current: when program counter points to 000, get F000 (static) from cache memory.
 Main memory is NOT included yet.
+--WAIT_STATE: can SAVE one clock cycle with customized 
+-- states for each wait state.
+-- i.e. execute the next_state when count = 1
+--		-> no wasted clock cycles
 
