@@ -31,6 +31,7 @@ add wave -noupdate /simplecomparch/D_current_state
 add wave -noupdate /simplecomparch/D_IR_word
 add wave -noupdate /simplecomparch/D_mem_ready
 add wave -noupdate /simplecomparch/D_mem_ready_controller
+add wave -noupdate /simplecomparch/D_cache_hit
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
 quietly wave cursor active 0

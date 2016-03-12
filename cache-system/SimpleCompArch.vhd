@@ -36,7 +36,8 @@ port( sys_clk							:	in std_logic;
 		D_IR_word									: out std_logic_vector(15 downto 0);
 		
 		D_mem_ready : out std_logic;
-		D_mem_ready_controller : out std_logic
+		D_mem_ready_controller : out std_logic;
+		D_cache_hit : out std_logic
 
 		-- end debug variables	
 );
@@ -56,6 +57,7 @@ architecture rtl of SimpleCompArch is
 	signal oe							: std_logic;
 	signal mem_ready_controller 	: std_logic;
 	signal mem_ready	: std_logic;
+	signal cache_hit	: std_logic;
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
@@ -102,7 +104,8 @@ Unit2: cache_controller port map(
 	Mre,
 	Mwe,
 	mdout_bus,
-	mem_ready);
+	mem_ready,
+	cache_hit);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -117,6 +120,7 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_IR_word <= IR_word;
 	D_mem_ready <= mem_ready;
 	D_mem_ready_controller <= mem_ready_controller;
+	D_cache_hit <= cache_hit;
 -- end debug variables		
 		
 end rtl;

@@ -81,6 +81,8 @@ begin
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
 			next_state <= S1a;
+			
+			mem_ready_controller <= '1';
 			state <= WAIT_STATE;
 		when S1a => 
 			current_state <= x"A1";
@@ -254,14 +256,17 @@ begin
 		--		-> no wasted clock cycles
 		when WAIT_STATE =>	
 			current_state <= x"FF";
-			mem_ready_controller <= '1';
+			
 			if (mem_ready = '1') then
-				count <= count + 1;
-				if (count = 1) then
-					state <= next_state;
-					count <= 0;
-					mem_ready_controller <= '0';
-				end if;
+				--current_state <= x"EE";
+				--state <= next_state;
+				mem_ready_controller <= '0';
+				--A1
+				current_state <= x"A1";
+				IRld_ctrl <= '0';
+				PCinc_ctrl <= '1';
+				Mre_ctrl <= '0';
+				state <= S1b;
 			end if;
 		
 	  when others =>

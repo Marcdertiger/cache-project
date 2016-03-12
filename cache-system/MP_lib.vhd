@@ -126,7 +126,8 @@ component cache_controller is
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-		mem_ready	 : OUT std_logic
+		mem_ready	 : OUT std_logic;
+		D_cache_hit : OUT std_logic
 	);
 end component;
 component TRAM is
@@ -137,6 +138,8 @@ port (
 		Mwe		:	in std_logic;
 		tag 		: 	in std_logic_vector(9 downto 0);
 		data_out :	out std_logic_vector(2 downto 0);
+		
+		cache_hit : out std_logic;
 		
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		

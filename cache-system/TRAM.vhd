@@ -30,6 +30,8 @@ port (
 		tag 		: 	in std_logic_vector(9 downto 0);
 		data_out :	out std_logic_vector(2 downto 0);
 		
+		cache_hit : buffer std_logic;
+		
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
@@ -80,14 +82,23 @@ begin
 			data_out <= "001";
 		else
 			if (clock'event and clock = '1') then
+				cache_hit <= '0';
 				for index in 0 to 7 loop
 					if tag_table(index) = tag then
 						data_out <= std_logic_vector(to_unsigned(index, data_out'length));
+						cache_hit <= '1';
 					end if;
 				end loop;				
 			end if;
 		end if;		
 	end process;
+	
+--	cache_hit_process: process(clock, cache_hit)
+--	begin
+--		if (clock'event and clock = '1' and cache_hit = '1') then
+--			cache_hit <= '0';
+--		end if;		
+--	end process;
 	
 	D_FIFO_Index <= std_logic_vector(to_unsigned(FIFO_Index, D_FIFO_Index'length));
 	
