@@ -83,46 +83,51 @@ begin
 		TRAM_write <= '0';
 		TRAM_tag <= "0000000000";
 		state <= S0;
-
-   elsif (clock'event and clock='1' and mem_read = '1') then
-	case state is 
-	when S0 =>
-		current_state <= x"0";
-		--check if there is a hit or a miss
-		--then go to s1 or s2
-		--
-		--read from tag_table in TRAM
-		TRAM_read  <= '1';
-		TRAM_write <= '0';
-		TRAM_tag <= address;
-		state <= S1;
-		
-		
-		
-	when S1 => --there is a hit
-		current_state <= x"1";
-		SRAM_read  <= '1';
-		SRAM_write <= '0';
-		SRAM_word  <= "01"; --HARD CODED FOR NOW
-		
-		--shut off read
-		TRAM_read  <= '0';
-		TRAM_write <= '0';
-
-		state <= S2;
-	when S2 =>
-		current_state <= x"2";
-		q <= SRAM_output_data;
-		
-		--shut off read
-		SRAM_read  <= '0';
-		SRAM_write <= '0';
+	elsif mem_read = '0' then
 		state <= S0;
-		
-	when others =>
-	end case;
+   elsif (clock'event and clock='1' and mem_read = '1') then
+		case state is 
+		when S0 =>
+			current_state <= x"0";
+			--check if there is a hit or a miss
+			--then go to s1 or s2
+			
+			SRAM_read  <= '0';
+			SRAM_write <= '0';
+			--
+			--read from tag_table in TRAM
+			TRAM_read  <= '1';
+			TRAM_write <= '0';
+			TRAM_tag <= address;
+			state <= S1;
+			
+			
+			
+		when S1 => --there is a hit
+			current_state <= x"1";
+			SRAM_read  <= '1';
+			SRAM_write <= '0';
+			SRAM_word  <= "01"; --HARD CODED FOR NOW
+			
+			--shut off read
+			TRAM_read  <= '0';
+			TRAM_write <= '0';
+
+			state <= S2;
+		when S2 =>
+			current_state <= x"2";
+			q <= SRAM_output_data;
+			
+--			--shut off read
+--			SRAM_read  <= '0';
+--			SRAM_write <= '0';
+			state <= S0;
+			
+		when others =>
+		end case;
 	end if;
-	end process;
+
+end process;
 
 Unit1: memory_4KB port map(
 	main_memory,
