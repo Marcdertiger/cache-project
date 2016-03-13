@@ -27,7 +27,7 @@ ENTITY cache_controller IS
 	PORT
 	(
 		mem_ready_controller : IN STD_LOGIC;
-		address	: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		address	: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
@@ -41,7 +41,7 @@ ENTITY cache_controller IS
 		D_TRAM_data_out : out std_logic_vector(2 downto 0);
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
 		D_SRAM_output_data : out STD_LOGIC_VECTOR (15 DOWNTO 0);
-		D_current_state : out std_logic_vector(3 downto 0);
+		D_cache_controller_state : out std_logic_vector(3 downto 0);
 		
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
@@ -70,13 +70,16 @@ signal TRAM_data_out : std_logic_vector(2 downto 0);
 signal SRAM_read  : std_logic;
 signal SRAM_write  : std_logic;
 signal SRAM_word  : std_logic_vector(1 downto 0);
-signal current_state : std_logic_vector(3 downto 0);
+signal SRAM_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
+
+signal cache_controller_state : std_logic_vector(3 downto 0);
 
 signal MAIN_read  :  std_logic;
 signal MAIN_write : std_logic;
 
-signal SRAM_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
-signal MAIN_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
+signal MAIN_output_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
+signal MAIN_input_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
+
 
 signal cache_hit  : std_logic;
   
@@ -87,92 +90,93 @@ begin
 	if reset='1' then
 		TRAM_read  <= '0';
 		TRAM_write <= '0';
-		TRAM_tag <= "0000000000";
+		TRAM_tag <= address(11 downto 2);
 		state <= S0;
 		
 	elsif mem_ready_controller = '0' then
+		cache_controller_state <= x"F";
 		state <= S0;
 		
    elsif (clock'event and clock='1' and mem_ready_controller = '1') then
 		case state is 
-		when S0 =>
-			current_state <= x"0";			
-			mem_ready <= '0';
-			
-			--read from tag_table in TRAM
-			TRAM_read  <= '1';
-			TRAM_write <= '0';
-			TRAM_tag <= address;
-			state <= S1;
-			
-		when S1 => --there is a hit
-			
-			TRAM_read  <= '0';
-			TRAM_write <= '0';
-		
-		--CHECK cache miss or hit
-		if (cache_hit = '1') then
-		--on cache HIT
-			current_state <= x"A";
-			SRAM_read  <= '1';
-			SRAM_write <= '0';
-			SRAM_word  <= "01"; --HARD CODED FOR NOW
-			
-			state <= S2;
-		--end HIT
-		else
-		
-		
-		--else
-		--cache MISS
-		current_state <= x"B";
-		MAIN_read <= '1'; -- read memory
-		MAIN_write <= '0';
-		state <= S_MEM1;
-		
---			1. MEMORY read
---				returns block of data (64 bits)
---			2. CACHE write
---				SRAM_read <= '0';
---				SRAM_write <= '1';
---				TRAM_write <='1';
---				TRAM_read <= '0';		
+			when S0 =>
+				cache_controller_state <= x"0";			
+				mem_ready <= '0';
 				
+				--read from tag_table in TRAM
+				TRAM_read  <= '1';
+				TRAM_write <= '0';
+				TRAM_tag <= address(11 downto 2);
+				state <= S1;
+				
+			when S1 => --there is a hit
+				
+				TRAM_read  <= '0';
+				TRAM_write <= '0';
 			
-		end if;
-		--end MISS
-		
-		when S2 =>
-			current_state <= x"2";
+			--CHECK cache miss or hit
+			if (cache_hit = '1') then
+			--on cache HIT
+				cache_controller_state <= x"A";
+				SRAM_read  <= '1';
+				SRAM_write <= '0';
+				SRAM_word  <= "01"; --HARD CODED FOR NOW
+				
+				state <= S2;
+			--end HIT
+			else
 			
-			--shut off read
-			SRAM_read  <= '0';
-			SRAM_write <= '0';
-			mem_ready <= '1';
-			state <= S0;
 			
-		when S3 =>
-		current_state <= x"3";
-		--do we need q <= SRAM...data; ??
-			q <= SRAM_output_data;
-			state <= S0;
+			--else
+			--cache MISS
+			cache_controller_state <= x"B";
+			MAIN_read <= '1'; -- read memory
+			MAIN_write <= '0';
+			state <= S_MEM1;
 			
-		when S_MEM1 =>
-			current_state <= x"C";
-			q <= MaiN_output_data;
-			state <= S0;
+	--			1. MEMORY read
+	--				returns block of data (64 bits)
+	--			2. CACHE write
+	--				SRAM_read <= '0';
+	--				SRAM_write <= '1';
+	--				TRAM_write <='1';
+	--				TRAM_read <= '0';		
+					
+				
+			end if;
+			--end MISS
 			
-		when others =>
+			when S2 =>
+				cache_controller_state <= x"2";
+				
+				--shut off read
+				SRAM_read  <= '0';
+				SRAM_write <= '0';
+				mem_ready <= '1';
+				state <= S0;
+				
+			when S3 =>
+				cache_controller_state <= x"3";
+				--do we need q <= SRAM...data; ??
+				q <= SRAM_output_data;
+				state <= S0;
+				
+			when S_MEM1 =>
+				cache_controller_state <= x"C";
+				-- q <= MaiN_output_data;
+				state <= S0;
+				
+			when others =>
 		end case;
 	end if;
 
 end process;
 
 Unit1: memory_4KB port map(
-	address(7 downto 0),
+	address(11 downto 2),
 	clken,
 	clock,
-	data,
+	MAIN_input_data,
 	MAIN_read,
 	MAIN_write,
 	MAIN_output_data);
@@ -208,7 +212,7 @@ Unit3: SRAM port map(
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;
 		D_TRAM_tag <= TRAM_tag;
-		D_current_state <= current_state;
+		D_cache_controller_state <= cache_controller_state;
 		D_cache_hit <= cache_hit;
 end fsm;
  

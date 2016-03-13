@@ -39,7 +39,8 @@ begin
 			cache(0) <= (
 				1 => x"4EE0",
 				others => x"0000");
-			cache(1) <= (others => x"0000");
+			cache(1) <= (
+				others => x"0000");
 			cache(2) <= (
 				1 => x"8990",
 				others => x"0000");

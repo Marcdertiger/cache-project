@@ -4,7 +4,7 @@
 
 -- Has a two way port to the Cache Controller (read and write) ********** 
 
--- 8 tag lenght (to match number of lines in cache) 
+-- 8 tag length (to match number of lines in cache) 
 
 --------------------------------------------------------
 -- Simple Computer Architecture
