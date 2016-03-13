@@ -37,7 +37,24 @@ port( sys_clk							:	in std_logic;
 		
 		D_mem_ready : out std_logic;
 		D_mem_ready_controller : out std_logic;
-		D_cache_hit : out std_logic
+		D_cache_hit : out std_logic;
+		
+		D_rf_0						: out std_logic_vector(15 downto 0);
+		D_rf_1						: out std_logic_vector(15 downto 0);
+		D_rf_2						: out std_logic_vector(15 downto 0);
+		D_rf_3						: out std_logic_vector(15 downto 0);
+		D_rf_4						: out std_logic_vector(15 downto 0);
+		D_rf_5						: out std_logic_vector(15 downto 0);
+		D_rf_6						: out std_logic_vector(15 downto 0);
+		D_rf_7						: out std_logic_vector(15 downto 0);
+		D_rf_8						: out std_logic_vector(15 downto 0);
+		D_rf_9						: out std_logic_vector(15 downto 0);
+		D_rf_10						: out std_logic_vector(15 downto 0);
+		D_rf_11						: out std_logic_vector(15 downto 0);
+		D_rf_12						: out std_logic_vector(15 downto 0);
+		D_rf_13						: out std_logic_vector(15 downto 0);
+		D_rf_14						: out std_logic_vector(15 downto 0);
+		D_rf_15						: out std_logic_vector(15 downto 0)
 
 		-- end debug variables	
 );
@@ -55,6 +72,8 @@ architecture rtl of SimpleCompArch is
 	signal IR_word				:	std_logic_vector(15 downto 0);
 	--System local variables
 	signal oe							: std_logic;
+	signal rf_tmp				: rf_type;
+		
 	signal mem_ready_controller 	: std_logic;
 	signal mem_ready	: std_logic;
 	signal cache_hit	: std_logic;
@@ -90,13 +109,14 @@ Unit1: CPU port map (
 	oe,
 	current_state,
 	IR_word,
+	rf_tmp,
 	mem_ready_controller,
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					
 Unit2: cache_controller port map(
 	mem_ready_controller,
-	"00"&mem_addr,
+	"0000"&mem_addr,
 	sys_rst,
 	mem_clk_en,
 	sys_clk,
@@ -121,6 +141,24 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_mem_ready <= mem_ready;
 	D_mem_ready_controller <= mem_ready_controller;
 	D_cache_hit <= cache_hit;
+	-- Register file debugging
+	D_rf_0 <= rf_tmp(0);	
+	D_rf_1 <= rf_tmp(1);	
+	D_rf_2 <= rf_tmp(2);	
+	D_rf_3 <= rf_tmp(3);	
+	D_rf_4 <= rf_tmp(4);	
+	D_rf_5 <= rf_tmp(5);	
+	D_rf_6 <= rf_tmp(6);	
+	D_rf_7 <= rf_tmp(7);
+	D_rf_8 <= rf_tmp(8);	
+	D_rf_9 <= rf_tmp(9);	
+	D_rf_10 <= rf_tmp(10);	
+	D_rf_11 <= rf_tmp(11);	
+	D_rf_12 <= rf_tmp(12);
+	D_rf_13 <= rf_tmp(13);	
+	D_rf_14 <= rf_tmp(14);	
+	D_rf_15 <= rf_tmp(15);
+	
 -- end debug variables		
 		
 end rtl;

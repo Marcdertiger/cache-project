@@ -36,19 +36,46 @@ begin
 	write: process(clock, rst, Mre, tag, word, data_in)
 	begin						
 		if rst='1' then		
-			cache(0) <= (
-				1 => x"4EE0",
-				others => x"0000");
-			cache(1) <= (
-				others => x"0000");
-			cache(2) <= (
-				1 => x"8990",
-				others => x"0000");
-			cache(3) <= (others => x"0000");
-			cache(4) <= (others => x"0000");
-			cache(5) <= (others => x"0000");
-			cache(6) <= (others => x"0000");
-			cache(7) <= (others => x"0000");
+			cache(0) <= ( -- 0d
+				0 => x"3000",
+				1 => x"3101",
+				2 => x"321A",
+				3 => x"3301",others => x"0000");
+			cache(1) <= ( -- 4d
+				0 => x"1018",
+				1 => x"1119",
+				2 => x"111F",
+				3 => x"4100",others => x"0000");
+			cache(2) <= ( -- 8d
+				0 => x"001F",
+				1 => x"2210",
+				2 => x"4230",
+				3 => x"041E",others => x"0000");
+			cache(3) <= ( -- 12d
+				0 => x"6406",
+				1 => x"7018",
+				2 => x"7019",
+				3 => x"701A",others => x"0000");
+			cache(4) <= ( -- 16d
+				0 => x"701B",
+				1 => x"701C",
+				2 => x"701D",
+				3 => x"F000",others => x"0000");
+			cache(5) <= ( -- 20d
+				0 => x"0000",
+				1 => x"0000",
+				2 => x"0000",
+				3 => x"0000",others => x"0000");
+			cache(6) <= ( -- 24d
+				0 => x"0000",
+				1 => x"0000",
+				2 => x"0000",
+				3 => x"0090",others => x"0000");
+			cache(7) <= ( -- 28d
+				0 => x"0A00",
+				1 => x"0000",
+				2 => x"0C00",
+				3 => x"0B00",others => x"0000");
 		else
 			if (clock'event and clock = '1') then
 				if (Mwe ='1' and Mre = '0') then

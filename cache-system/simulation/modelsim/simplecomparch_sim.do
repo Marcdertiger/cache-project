@@ -32,6 +32,25 @@ add wave -noupdate /simplecomparch/D_IR_word
 add wave -noupdate /simplecomparch/D_mem_ready
 add wave -noupdate /simplecomparch/D_mem_ready_controller
 add wave -noupdate /simplecomparch/D_cache_hit
+add wave -noupdate /simplecomparch/D_rf_0
+add wave -noupdate /simplecomparch/D_rf_1
+add wave -noupdate /simplecomparch/D_rf_2
+add wave -noupdate /simplecomparch/D_rf_3
+add wave -noupdate /simplecomparch/D_rf_4
+add wave -noupdate /simplecomparch/D_rf_5
+add wave -noupdate /simplecomparch/D_rf_6
+add wave -noupdate /simplecomparch/D_rf_7
+add wave -noupdate /simplecomparch/D_rf_8
+add wave -noupdate /simplecomparch/D_rf_9
+add wave -noupdate /simplecomparch/D_rf_10
+add wave -noupdate /simplecomparch/D_rf_11
+add wave -noupdate /simplecomparch/D_rf_12
+add wave -noupdate /simplecomparch/D_rf_13
+add wave -noupdate /simplecomparch/D_rf_14
+add wave -noupdate /simplecomparch/D_rf_15
+
+
+
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
 quietly wave cursor active 0
@@ -53,4 +72,4 @@ WaveRestoreZoom {0 ps} {6468 ps}
 
 radix -hexadecimal
 
-run 5ns
+run 25ns

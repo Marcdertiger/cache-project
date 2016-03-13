@@ -24,17 +24,18 @@ port ( 	clock	: 	in std_logic;
 	RFr2a	: 	in std_logic_vector(3 downto 0);
 	RFw		: 	in std_logic_vector(15 downto 0);
 	RFr1	: 	out std_logic_vector(15 downto 0);
-	RFr2	:	out std_logic_vector(15 downto 0)
+	RFr2	:	out std_logic_vector(15 downto 0);
+	debug_tmp_rf : out rf_type
 );
 end reg_file;
 
 architecture behv of reg_file is			
 
-  type rf_type is array (0 to 15) of 
-        std_logic_vector(15 downto 0);
+  
   signal tmp_rf: rf_type;
 
 begin
+	debug_tmp_rf <= tmp_rf;
   write12: process(clock, rst, RFwa, RFwe, RFw)
   begin
     if rst='1' then				-- high active

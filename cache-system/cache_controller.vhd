@@ -85,7 +85,7 @@ signal cache_hit  : std_logic;
   
 begin
 
-process (clock,reset, address)
+process (clock, reset, address)
 begin
 	if reset='1' then
 		TRAM_read  <= '0';
@@ -109,7 +109,7 @@ begin
 				TRAM_tag <= address(11 downto 2);
 				state <= S1;
 				
-			when S1 => --there is a hit
+			when S1 =>
 				
 				TRAM_read  <= '0';
 				TRAM_write <= '0';
@@ -117,10 +117,20 @@ begin
 			--CHECK cache miss or hit
 			if (cache_hit = '1') then
 			--on cache HIT
-				cache_controller_state <= x"A";
-				SRAM_read  <= '1';
-				SRAM_write <= '0';
-				SRAM_word  <= "01"; --HARD CODED FOR NOW
+				--read
+				if(rden = '1' and wren = '0') then
+					cache_controller_state <= x"1";
+					SRAM_read  <= '1';
+					SRAM_write <= '0';
+					SRAM_word  <= address(1 downto 0);
+				
+				elsif(rden = '0' and wren = '1') then
+					cache_controller_state <= x"2";
+					SRAM_read  <= '0';
+					SRAM_write <= '1';
+					SRAM_word  <= address(1 downto 0);
+				end if;
+				
 				
 				state <= S2;
 			--end HIT
@@ -156,9 +166,9 @@ begin
 				state <= S0;
 				
 			when S3 =>
-				cache_controller_state <= x"3";
+				cache_controller_state <= x"4";
 				--do we need q <= SRAM...data; ??
-				q <= SRAM_output_data;
+				--q <= SRAM_output_data;
 				state <= S0;
 				
 			when S_MEM1 =>
@@ -207,7 +217,7 @@ Unit3: SRAM port map(
 		SRAM_word,
 		TRAM_data_out,
 		data,
-		SRAM_output_data);
+		q);
 		
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;

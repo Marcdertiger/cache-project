@@ -118,6 +118,8 @@ begin
 			Mre_ctrl <= '1';
 			Mwe_ctrl <= '0';		  
 			next_state <= S3a;
+			
+			mem_ready_controller <= '1';
 			state <= WAIT_STATE;
 	  when S3a =>   
 			current_state <= x"A3";
@@ -142,7 +144,9 @@ begin
 			Mre_ctrl <= '0';
 			Mwe_ctrl <= '1';
 			next_state <= S4b;
-			state <= WAIT_STATE; -- write into memory
+			
+			mem_ready_controller <= '1';
+			state <= WAIT_STATE;
 	  when S4b =>   
 			current_state <= x"B4";
 			Ms_ctrl <= "10";				  
@@ -163,6 +167,8 @@ begin
 			Mre_ctrl <= '0';			
 			Mwe_ctrl <= '1'; -- write into memory
 			next_state <= S5b;
+			
+			mem_ready_controller <= '1';
 			state <= WAIT_STATE;
 	  when S5b => 	
 			current_state <= x"B5";
@@ -244,7 +250,9 @@ begin
 			Mre_ctrl <= '1'; -- read memory
 			Mwe_ctrl <= '0';
 			next_state <= S11a;
-			state <= WAIT_STATE;	
+			
+			mem_ready_controller <= '1';
+			state <= WAIT_STATE;
 	  when S11a =>  
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
@@ -264,6 +272,8 @@ begin
 			RFs_ctrl <= "01";		
 			Mwe_ctrl <= '0';
 			next_state <= S12a;
+			
+			mem_ready_controller <= '1';
 			state <= WAIT_STATE;
 			
 	  when S12a =>   		
@@ -305,11 +315,6 @@ begin
 			jmpen_ctrl <= '0';
 	      state <= S1;
 		
-	
-	
-	
-	
-	
 			
 		-- A 
 		--can SAVE one clock cycle with customized 
@@ -320,15 +325,11 @@ begin
 			current_state <= x"FF";
 			
 			if (mem_ready = '1') then
-				--current_state <= x"EE";
-				--state <= next_state;
+				current_state <= x"EE";
+				state <= next_state;
 				mem_ready_controller <= '0';
 				--A1
-				current_state <= x"A1";
-				IRld_ctrl <= '0';
-				PCinc_ctrl <= '1';
-				Mre_ctrl <= '0';
-				state <= S1b;
+				--current_state <= x"A1";
 			end if;
 		
 	  when others =>
