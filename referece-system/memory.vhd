@@ -33,38 +33,41 @@ begin
 	begin							-- program to generate the first 15 coeff. of the  equation y(n) = 2x(n) + y(n-1) - y(n-2)	 
 		if rst='1' then		-- x=2,3,...,12,13,14, y(0)=1 andy(1)=3.
 			tmp_ram <= (
-						--0 => x"3045",
-						--1 => x"3104",
-						--2 => x"4010",
-						--3 => x"1020",
-						--4 => x"0220",
-						--5 => x"7020",
-						0 => x"3000",	   		-- R0 <- #0			mov R0, #0
-						1 => x"3101",			-- R1 <- #1			mov R1, #1
-						2 => x"3234",			-- R2 <- #52		mov R2, #52
-						3 => x"3301",			-- R3 <- #1			mov R3, #1
-						4 => x"1032",			-- M[50] <- R0 		mov M[50], R0
-						5 => x"1133",			-- M[51] <- R1 		mov M[51], R1
-						6 => x"1164",			-- M[100]<- R1		mov M[100], R1
-						7 => x"4100",			-- R1 <- R1 + R0	add R1, R0
-						8 => x"0064",			-- R0 <- M[100]		mov R0, M[100]
-						9 => x"2210",			-- M[R2] <- R1 		mov M[R2], R1
-						10 => x"4230",			-- R2 <- R2 + R3 	add R2, R3
-						11 => x"043B",			-- R4 <- M[59]		mov R4, M[59]
-						12 => x"7002",
-						13 => x"6406",  		-- R4=0: PC<- #6	jz R4, #6
-				
-						14 => x"7032",			-- output<- M[50]   mov obuf_out,M[50]
-						15 => x"7033",			-- output<- M[51]   mov obuf_out,M[51]
-						16 => x"7034",			-- output<- M[52]   mov obuf_out,M[52]
-						17 => x"7035",			-- output<- M[53]   mov obuf_out,M[53]
-						18 => x"7036",			-- output<- M[54]   mov obuf_out,M[54]
-						19 => x"7037",			-- output<- M[55]   mov obuf_out,M[55]
-						20 => x"7038",			-- output<- M[56]   mov obuf_out,M[56]
-						21 => x"7039",			-- output<- M[57]   mov obuf_out,M[57]
-						22 => x"703A",			-- output<- M[58]   mov obuf_out,M[58]
-						23 => x"703B",			-- output<- M[59]   mov obuf_out,M[59]			
-						24 => x"F000",			-- halt
+						0 => x"3045",
+						1 => x"3104",
+						2 => x"4010",
+						3 => x"1020",
+						4 => x"0220",
+						5 => x"7020",
+						
+						
+						
+--						0 => x"3000",	   		-- R0 <- #0			mov R0, #0
+--						1 => x"3101",			-- R1 <- #1			mov R1, #1
+--						2 => x"3234",			-- R2 <- #52		mov R2, #52
+--						3 => x"3301",			-- R3 <- #1			mov R3, #1
+--						4 => x"1032",			-- M[50] <- R0 		mov M[50], R0
+--						5 => x"1133",			-- M[51] <- R1 		mov M[51], R1
+--						6 => x"1164",			-- M[100]<- R1		mov M[100], R1
+--						7 => x"4100",			-- R1 <- R1 + R0	add R1, R0
+--						8 => x"0064",			-- R0 <- M[100]		mov R0, M[100]
+--						9 => x"2210",			-- M[R2] <- R1 		mov M[R2], R1
+--						10 => x"4230",			-- R2 <- R2 + R3 	add R2, R3
+--						11 => x"043B",			-- R4 <- M[59]		mov R4, M[59]
+--						12 => x"7002",
+--						13 => x"6406",  		-- R4=0: PC<- #6	jz R4, #6
+--				
+--						14 => x"7032",			-- output<- M[50]   mov obuf_out,M[50]
+--						15 => x"7033",			-- output<- M[51]   mov obuf_out,M[51]
+--						16 => x"7034",			-- output<- M[52]   mov obuf_out,M[52]
+--						17 => x"7035",			-- output<- M[53]   mov obuf_out,M[53]
+--						18 => x"7036",			-- output<- M[54]   mov obuf_out,M[54]
+--						19 => x"7037",			-- output<- M[55]   mov obuf_out,M[55]
+--						20 => x"7038",			-- output<- M[56]   mov obuf_out,M[56]
+--						21 => x"7039",			-- output<- M[57]   mov obuf_out,M[57]
+--						22 => x"703A",			-- output<- M[58]   mov obuf_out,M[58]
+--						23 => x"703B",			-- output<- M[59]   mov obuf_out,M[59]			
+--						24 => x"F000",			-- halt
 						others => x"0000");
 		else
 			if (clock'event and clock = '1') then					

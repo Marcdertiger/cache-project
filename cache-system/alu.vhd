@@ -12,6 +12,13 @@ use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;  
 use work.MP_lib.all;
 
+-- addition of logic to compare if a register is of value 25 decimal.
+-- allows for 5x5 matrix operations.
+
+-- future implementation may include comparism to any number, more complex
+-- logic is needed to do so. Not necessary for the limited use of such logic.
+
+
 entity alu is
 port (	num_A: 	in std_logic_vector(15 downto 0);
 		num_B: 	in std_logic_vector(15 downto 0);
@@ -25,6 +32,7 @@ end alu;
 architecture behv of alu is
 
 signal alu_tmp: std_logic_vector(15 downto 0);
+signal alu_tmp1: std_logic_vector(15 downto 0);
 
 begin
 
@@ -32,7 +40,7 @@ begin
 	begin			
 		case ALUs is
 		  when "00" => alu_tmp <= num_A;
-		  when "01" => alu_tmp <= num_B;
+		  when "01" => alu_tmp  <= num_B; alu_tmp1 <= num_B;
 		  when "10" => alu_tmp <= num_A + num_B;
 		  when "11" => alu_tmp <= num_A - num_B;
 		  when others =>
@@ -44,6 +52,12 @@ begin
 		if (jpsign = '1' and alu_tmp = ZERO) then
 			ALUz <= '1';
 		else
+			ALUz <= '0';
+		end if;
+		
+		if (jpsign = '1' and alu_tmp1 = 25) then
+			ALUz <= '1';
+			else
 			ALUz <= '0';
 		end if;
 	end process;					

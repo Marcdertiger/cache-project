@@ -42,7 +42,7 @@ end controller;
 architecture fsm of controller is
 
   type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE);
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S12,S12a,S12b,S13,S13a,S13b,WAIT_STATE);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -249,6 +249,68 @@ begin
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
+			
+		-- S12 and S13 may need optimizing. version form 3/13/2016
+		-- tested in reference system. 
+			
+				when S12 =>	
+			current_state <= x"0C";
+			RFr1a_ctrl <= IR_word(11 downto 8);	
+			Ms_ctrl <= "00";
+			Mre_ctrl <= '1';
+			RFwe_ctrl <= '0';
+			RFr1e_ctrl <= '1';
+			RFr2e_ctrl <= '0';		
+			RFs_ctrl <= "01";		
+			Mwe_ctrl <= '0';
+			next_state <= S12a;
+			state <= WAIT_STATE;
+			
+	  when S12a =>   		
+	  current_state <= x"AC";
+			
+			RFs_ctrl <= "01";	
+			RFwa_ctrl <= IR_word(7 downto 4);
+			RFwe_ctrl <= '1';
+			state<=S12b;
+	
+	  
+	  when S12b => 	
+			current_state <= x"BC";
+			Ms_ctrl <= "10";-- return
+			Mwe_ctrl <= '0';
+			state <= S1;
+			
+			
+		-- this should jump only if register RF[r1] = 25 decimal (19 hex)
+		-- tested and working in reference system with parts of matrix addition code
+		-- Jumping when the target register is zero is avoided by using num_B channel
+		-- instead of num_A, that way we only check for the single =25 condition. see ALU 
+		-- unit for logic implemented there.
+		-- tested in reference system
+		
+		
+	when S13 =>	 
+			current_state <= x"0D";
+			jmpen_ctrl <= '1';
+			RFr2a_ctrl <= IR_word(11 downto 8);	
+			RFr2e_ctrl <= '1'; -- jz if R[rn] = 0
+			ALUs_ctrl <= "01";
+			state <= S13a;
+	  when S13a =>   
+			current_state <= x"AD";
+			state <= S13b;
+	  when S13b =>   
+			current_state <= x"BD";
+			jmpen_ctrl <= '0';
+	      state <= S1;
+		
+	
+	
+	
+	
+	
+			
 		-- A 
 		--can SAVE one clock cycle with customized 
 		-- states for each wait state.

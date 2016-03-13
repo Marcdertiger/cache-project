@@ -80,6 +80,8 @@ begin
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
 			next_state <= S1a;
+			
+			--mem_ready_controller <= '1';
 			state <= WAIT_STATE;
 		when S1a => 
 			current_state <= x"A1";
@@ -260,40 +262,52 @@ begin
 			end if;
 		
 		
-		-- this should do : RF <= mem[RF[rm]] (inverse of MOV3)
+		-- this should do : R2 <= mem[RF[r1]] (inverse of MOV3)
 		-- copied mov3 code as a starting point
 		-- does not work( 10/03/2016 4:45pm ) 
+		-- updated and tested : new works (13/03/2016)
+		
 		when S12 =>	
 			current_state <= x"0C";
 			RFr1a_ctrl <= IR_word(11 downto 8);	
-			RFr1e_ctrl <= '1'; -- RF[rn] <= mem[RF[rm]]
 			Ms_ctrl <= "00";
-			ALUs_ctrl <= "01";
-			RFr2a_ctrl <= IR_word(7 downto 4); 
-			RFr2e_ctrl <= '1'; -- set addr.& data
-			state <= S12a;
-	  when S12a =>   
-			current_state <= x"AB";
-			RFs_ctrl <= "00";
-			RFwa_ctrl <= IR_word(11 downto 8);
+			Mre_ctrl <= '1';
+			RFwe_ctrl <= '0';
+			RFr1e_ctrl <= '1';
+			RFr2e_ctrl <= '0';		
+			RFs_ctrl <= "01";		
+			Mwe_ctrl <= '0';
+			next_state <= S12a;
+			state <= WAIT_STATE;
+			
+	  when S12a =>   		
+	  current_state <= x"AC";
+			
+			RFs_ctrl <= "01";	
+			RFwa_ctrl <= IR_word(7 downto 4);
 			RFwe_ctrl <= '1';
-			next_state <= S12b;
-			state <= WAIT_STATE;	
+			state<=S12b;
+	
+	  
 	  when S12b => 	
-			current_state <= x"BB";
+			current_state <= x"BC";
 			Ms_ctrl <= "10";-- return
 			Mwe_ctrl <= '0';
 			state <= S1;
 		
 		-- this should jump only if register 
 		-- copied jz code as a starting point
-		-- does not work( 10/03/2016 3:45pm ) 
-		when S13 =>	
+		-- Only difference is that ALUs_ctrl is on data b now and that port has an
+		-- extra signal that compared with the value 25. This is to remove possibility
+		-- of jumping if zero.
+		
+		
+		when S13 =>	 
 			current_state <= x"0D";
 			jmpen_ctrl <= '1';
-			RFr1a_ctrl <= IR_word(11 downto 8);	
-			RFr1e_ctrl <= '1'; -- jz if R[rn] = 0
-			ALUs_ctrl <= "00";
+			RFr2a_ctrl <= IR_word(11 downto 8);	
+			RFr2e_ctrl <= '1'; -- jz if R[rn] = 0
+			ALUs_ctrl <= "01";
 			state <= S13a;
 	  when S13a =>   
 			current_state <= x"AD";

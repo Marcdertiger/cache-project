@@ -25,6 +25,9 @@ end alu;
 architecture behv of alu is
 
 signal alu_tmp: std_logic_vector(15 downto 0);
+signal alu_tmp1: std_logic_vector(15 downto 0);
+
+
 
 begin
 
@@ -32,7 +35,7 @@ begin
 	begin			
 		case ALUs is
 		  when "00" => alu_tmp <= num_A;
-		  when "01" => alu_tmp <= num_B;
+		  when "01" => alu_tmp  <= num_B; alu_tmp1 <= num_B;
 		  when "10" => alu_tmp <= num_A + num_B;
 		  when "11" => alu_tmp <= num_A - num_B;
 		  when others =>
@@ -46,6 +49,12 @@ begin
 		else
 			ALUz <= '0';
 		end if;
+		if (jpsign = '1' and alu_tmp1 = 25) then
+			ALUz <= '1';
+			else
+			ALUz <= '0';
+		end if;
+		
 	end process;					
 	
 	ALUout <= alu_tmp;
