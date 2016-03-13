@@ -41,7 +41,7 @@ begin
 				others => x"0000");
 			cache(1) <= (others => x"0000");
 			cache(2) <= (
-				1 => x"F000",
+				1 => x"8900",
 				others => x"0000");
 			cache(3) <= (others => x"0000");
 			cache(4) <= (others => x"0000");
