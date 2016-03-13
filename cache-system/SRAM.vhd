@@ -21,7 +21,13 @@ port (
 		word	:	in std_logic_vector(1 downto 0);
 		tag 	: 	in std_logic_vector(2 downto 0);
 		data_in	:	in std_logic_vector(15 downto 0);
-		data_out:	out std_logic_vector(15 downto 0)
+		data_out:	out std_logic_vector(15 downto 0);
+		mem_data_in : in std_logic_vector(63 downto 0);
+		cache_hit : in std_logic;
+		D_Line0 : out std_logic_vector(63 downto 0);
+		D_Line1 : out std_logic_vector(63 downto 0);
+		D_Line2 : out std_logic_vector(63 downto 0);
+		D_Line3 : out std_logic_vector(63 downto 0)
 );
 end sram;
 
@@ -51,8 +57,14 @@ begin
 			cache(7) <= (others => x"0000");
 		else
 			if (clock'event and clock = '1') then
-				if (Mwe ='1' and Mre = '0') then
+				if (Mwe ='1' and Mre = '0' and cache_hit = '1') then
 					cache(conv_integer(tag))(conv_integer(word)) <= data_in;
+				elsif (Mwe ='1' and Mre = '0' and cache_hit = '0') then
+					-- 
+					cache(conv_integer(tag))(0) <= mem_data_in(63 downto 48);
+					cache(conv_integer(tag))(1) <= mem_data_in(47 downto 32);
+					cache(conv_integer(tag))(2) <= mem_data_in(31 downto 16);
+					cache(conv_integer(tag))(3) <= mem_data_in(15 downto 0);
 				end if;
 			end if;
 		end if;
@@ -70,4 +82,10 @@ begin
 			end if;
 		end if;
 	end process;
+	
+	D_Line0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
+	D_Line1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
+	D_Line2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
+	D_Line3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
+	
 end behv;

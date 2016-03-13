@@ -52,16 +52,24 @@ ENTITY cache_controller IS
 		D_tag_table_6 : out std_logic_vector(9 downto 0);
 		D_tag_table_7 : out std_logic_vector(9 downto 0);
 		
+		D_mem_data_out : out std_logic_vector(63 downto 0);
+		D_mem_read : out std_logic;
+		
 		mem_ready	: out std_logic;
 		
-		D_cache_hit : out std_logic
+		D_cache_hit : out std_logic;
+		
+		D_Line0 : out std_logic_vector(63 downto 0);
+		D_Line1 : out std_logic_vector(63 downto 0);
+		D_Line2 : out std_logic_vector(63 downto 0);
+		D_Line3 : out std_logic_vector(63 downto 0)
 		
 	);
 END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S3, S_MEM1);
+type state_type is ( S0,S1,S2, S3, S_MEM1, S_MEM2);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -80,13 +88,19 @@ signal MAIN_write : std_logic;
 signal MAIN_output_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
 signal MAIN_input_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
 
-
 signal cache_hit  : std_logic;
+
+signal cache_line0 : std_logic_vector(63 downto 0);
+signal cache_line1 : std_logic_vector(63 downto 0);
+signal cache_line2 : std_logic_vector(63 downto 0);
+signal cache_line3 : std_logic_vector(63 downto 0);
   
 begin
 
 process (clock,reset, address)
 begin
+	SRAM_word <= address(1 downto 0);
+
 	if reset='1' then
 		TRAM_read  <= '0';
 		TRAM_write <= '0';
@@ -103,6 +117,11 @@ begin
 				cache_controller_state <= x"0";			
 				mem_ready <= '0';
 				
+				MAIN_read <= '0';
+				
+				-- Clear SRAM write;
+				SRAM_write <= '0';
+				
 				--read from tag_table in TRAM
 				TRAM_read  <= '1';
 				TRAM_write <= '0';
@@ -110,30 +129,28 @@ begin
 				state <= S1;
 				
 			when S1 => --there is a hit
-				
+				cache_controller_state <= x"1";
 				TRAM_read  <= '0';
 				TRAM_write <= '0';
 			
-			--CHECK cache miss or hit
-			if (cache_hit = '1') then
-			--on cache HIT
-				cache_controller_state <= x"A";
-				SRAM_read  <= '1';
-				SRAM_write <= '0';
-				SRAM_word  <= "01"; --HARD CODED FOR NOW
-				
-				state <= S2;
-			--end HIT
-			else
-			
-			
-			--else
-			--cache MISS
-			cache_controller_state <= x"B";
-			MAIN_read <= '1'; -- read memory
-			MAIN_write <= '0';
-			state <= S_MEM1;
-			
+				--CHECK cache miss or hit
+				if (cache_hit = '1') then
+					--on cache HIT
+					cache_controller_state <= x"A";
+					SRAM_read  <= '1';
+					SRAM_write <= '0';
+					--SRAM_word  <= "01"; --HARD CODED FOR NOW
+					
+					state <= S2;
+				--end HIT
+				else			
+					--else
+					--cache MISS
+					cache_controller_state <= x"B";
+					MAIN_read <= '1'; -- read memory
+					MAIN_write <= '0';
+					state <= S_MEM1;
+					
 	--			1. MEMORY read
 	--				returns block of data (64 bits)
 	--			2. CACHE write
@@ -143,8 +160,8 @@ begin
 	--				TRAM_read <= '0';		
 					
 				
-			end if;
-			--end MISS
+				end if;
+				--end MISS
 			
 			when S2 =>
 				cache_controller_state <= x"2";
@@ -163,9 +180,25 @@ begin
 				
 			when S_MEM1 =>
 				cache_controller_state <= x"C";
-				-- q <= MaiN_output_data;
-				state <= S0;
 				
+				-- Write to TRAM;
+				TRAM_write <= '1';
+				TRAM_READ <= '0';
+				
+				-- q <= MaiN_output_data;
+				state <= S_MEM2;
+			when S_MEM2 =>
+				cache_controller_state <= x"D";
+				
+				-- Clear TRAM controls;
+				TRAM_write <= '0';
+				TRAM_READ <= '0';
+					
+				--Write to SRAM;
+				SRAM_write <= '1';
+				SRAM_read <= '0';
+				
+				state <= S0;				
 			when others =>
 		end case;
 	end if;
@@ -174,7 +207,7 @@ end process;
 
 Unit1: memory_4KB port map(
 	address(11 downto 2),
-	clken,
+	'1',
 	clock,
 	MAIN_input_data,
 	MAIN_read,
@@ -207,13 +240,26 @@ Unit3: SRAM port map(
 		SRAM_word,
 		TRAM_data_out,
 		data,
-		SRAM_output_data);
+		SRAM_output_data,
+		MAIN_output_data,
+		cache_hit,
+		cache_line0,
+		cache_line1,
+		cache_line2,
+		cache_line3);
 		
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;
 		D_TRAM_tag <= TRAM_tag;
 		D_cache_controller_state <= cache_controller_state;
 		D_cache_hit <= cache_hit;
+		D_mem_data_out <= MAIN_output_data;
+		D_mem_read <= MAIN_read;
+		
+		D_Line0 <= cache_line0;
+		D_Line1 <= cache_line1;
+		D_Line2 <= cache_line2;
+		D_Line3 <= cache_line3;
 end fsm;
  
  

@@ -163,7 +163,14 @@ port (
 		word	:	in std_logic_vector(1 downto 0);
 		tag 	: 	in std_logic_vector(2 downto 0);
 		data_in	:	in std_logic_vector(15 downto 0);
-		data_out:	out std_logic_vector(15 downto 0)
+		data_out:	out std_logic_vector(15 downto 0);
+		mem_data_in : in std_logic_vector(63 downto 0);
+		cache_hit : in std_logic;
+
+		D_Line0 : out std_logic_vector(63 downto 0);
+		D_Line1 : out std_logic_vector(63 downto 0);
+		D_Line2 : out std_logic_vector(63 downto 0);
+		D_Line3 : out std_logic_vector(63 downto 0)
 );
 end component;
 

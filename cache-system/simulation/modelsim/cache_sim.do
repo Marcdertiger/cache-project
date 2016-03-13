@@ -4,7 +4,7 @@ force clock 1 0, 0 100 -r 200
 force reset 1 0, 0 400
 force clken 1
 force mem_ready_controller 1 600
-force address 16#002
+force address 16#009
 add wave clock
 add wave reset
 add wave address
@@ -26,6 +26,13 @@ add wave D_tag_table_7
 add wave mem_ready_controller
 add wave D_cache_hit
 add wave D_cache_controller_state
+add wave D_mem_data_out
+add wave D_mem_read
+
+add wave D_Line0
+add wave D_Line1
+add wave D_Line2
+add wave D_Line3
 
 radix -hexadecimal
 
