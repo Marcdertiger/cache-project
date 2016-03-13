@@ -72,6 +72,9 @@ to test jump instruction,(OP 9) use this in the m9k memory file:
 	7 : 4100;			
 	8 : 0064;
 
+![OP 9](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OP9.png?token=ANNZ9zcV9Ij5kQC0cdkwccFZ2c9fsXeXks5W7sRIwA%3D%3D)
+
+
 to test (OP 8), use something like this: 
 
 
@@ -80,8 +83,7 @@ to test (OP 8), use something like this:
 	2 : 8150;			
 	3 : xxxx;			
 	
-
-
+![OP 8](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OP8.png?token=ANNZ93U40xoMfHPDB7KI9NbXAlVtG3XYks5W7sQzwA%3D%3D)
 
 
 
