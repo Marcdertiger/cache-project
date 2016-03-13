@@ -76,12 +76,12 @@ begin
 				0 => x"0000",
 				1 => x"0000",
 				2 => x"0000",
-				3 => x"0090",others => x"0000");
+				3 => x"0000",others => x"0000");
 			cache(7) <= ( -- 28d
-				0 => x"0A00",
+				0 => x"0000",
 				1 => x"0000",
-				2 => x"0C00",
-				3 => x"0B00",others => x"0000");
+				2 => x"0000",
+				3 => x"0000",others => x"0000");
 		else
 			if (clock'event and clock = '1') then
 				if (Mwe ='1' and Mre = '0' and cache_hit = '1') then

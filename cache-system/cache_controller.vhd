@@ -250,15 +250,13 @@ Unit3: SRAM port map(
 		SRAM_word,
 		TRAM_data_out,
 		data,
-		q);
-
-		--SRAM_output_data,
-		--MAIN_output_data,
-		--cache_hit,
-		--cache_line0,
-		--cache_line1,
-		--cache_line2,
-		--cache_line3);
+		q,
+		MAIN_output_data,
+		cache_hit,
+		cache_line0,
+		cache_line1,
+		cache_line2,
+		cache_line3);
 		
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;

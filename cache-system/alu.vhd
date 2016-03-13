@@ -52,14 +52,12 @@ begin
 		if (jpsign = '1' and alu_tmp = ZERO) then
 			ALUz <= '1';
 		else
-			ALUz <= '0';
-		end if;
-		
-		if (jpsign = '1' and alu_tmp1 = 25) then
+			if (jpsign = '1' and alu_tmp1 = 25) then
 			ALUz <= '1';
 			else
 			ALUz <= '0';
 		end if;
+		
 	end process;					
 	
 	ALUout <= alu_tmp;
