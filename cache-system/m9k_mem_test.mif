@@ -23,7 +23,7 @@ DATA_RADIX=HEX;
 
 CONTENT 
 BEGIN
-	0 : 30EE;
+	0 : F000;
 	1 : 1050;
 	2 : 7050;
 	3 : F000;

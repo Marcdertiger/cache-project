@@ -61,7 +61,7 @@ END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S3);
+type state_type is ( S0,S1,S2, S3, S_MEM1);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -72,7 +72,8 @@ signal SRAM_write  : std_logic;
 signal SRAM_word  : std_logic_vector(1 downto 0);
 signal current_state : std_logic_vector(3 downto 0);
 
-signal main_memory : std_logic_vector(7 downto 0);
+signal MAIN_read  :  std_logic;
+signal MAIN_write : std_logic;
 
 signal SRAM_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
 signal MAIN_output_data : STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -95,12 +96,8 @@ begin
    elsif (clock'event and clock='1' and mem_ready_controller = '1') then
 		case state is 
 		when S0 =>
-			current_state <= x"0";
-			--check if there is a hit or a miss
-			
+			current_state <= x"0";			
 			mem_ready <= '0';
-			
-			--cache_hit <= '0';
 			
 			--read from tag_table in TRAM
 			TRAM_read  <= '1';
@@ -109,22 +106,29 @@ begin
 			state <= S1;
 			
 		when S1 => --there is a hit
-			current_state <= x"1";
+			
 			TRAM_read  <= '0';
 			TRAM_write <= '0';
 		
 		--CHECK cache miss or hit
-		-- if cache_hit = '1' then
+		if (cache_hit = '1') then
 		--on cache HIT
+			current_state <= x"A";
 			SRAM_read  <= '1';
 			SRAM_write <= '0';
 			SRAM_word  <= "01"; --HARD CODED FOR NOW
 			
 			state <= S2;
 		--end HIT
+		else
+		
 		
 		--else
 		--cache MISS
+		current_state <= x"B";
+		MAIN_read <= '1'; -- read memory
+		MAIN_write <= '0';
+		state <= S_MEM1;
 		
 --			1. MEMORY read
 --				returns block of data (64 bits)
@@ -135,11 +139,11 @@ begin
 --				TRAM_read <= '0';		
 				
 			
-		-- end if;
+		end if;
 		--end MISS
 		
 		when S2 =>
-			current_state <= x"3";
+			current_state <= x"2";
 			
 			--shut off read
 			SRAM_read  <= '0';
@@ -148,9 +152,15 @@ begin
 			state <= S0;
 			
 		when S3 =>
+		current_state <= x"3";
+		--do we need q <= SRAM...data; ??
 			q <= SRAM_output_data;
 			state <= S0;
 			
+		when S_MEM1 =>
+			current_state <= x"C";
+			q <= MaiN_output_data;
+			state <= S0;
 			
 		when others =>
 		end case;
@@ -159,12 +169,12 @@ begin
 end process;
 
 Unit1: memory_4KB port map(
-	main_memory,
+	address(7 downto 0),
 	clken,
 	clock,
 	data,
-	rden,
-	wren,
+	MAIN_read,
+	MAIN_write,
 	MAIN_output_data);
 
 Unit2: TRAM port map(
@@ -193,7 +203,7 @@ Unit3: SRAM port map(
 		SRAM_word,
 		TRAM_data_out,
 		data,
-		q);
+		SRAM_output_data);
 		
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;
