@@ -91,11 +91,19 @@ to test (OP 8), use something like this:
 
 ### Cache Memory
 Have implemented a cache controller interface between the SimpleCompArch and cache memory. 
-You can do static read from cache memory.
-Current: when program counter points to 000, get F000 (static) from cache memory.
+On memory access, it checks it the tag is in TRAM. Then can read and write to SRAM.
+The Fibonacci series outputs 0,1,1,2,3,5 as expected.
+![Fibonacci 1]()
+![Fibonacci 2]()
+![Fibonacci 3]()
+
+
+Currently program counter and D_mem_addr are the same thing.
 Main memory is NOT included yet.
---WAIT_STATE: can SAVE one clock cycle with customized 
--- states for each wait state.
--- i.e. execute the next_state when count = 1
---		-> no wasted clock cycles
+
+Number of cycles:
+WAIT_STATE: can SAVE one clock cycle with customized 
+ states for each wait state.
+ i.e. execute the next_state when count = 1
+		-> no wasted clock cycles
 
