@@ -39,6 +39,8 @@ http://download.intel.com/design/intarch/papers/cache6.pdf
 
 The program is written asusming we have access to move the value from memory to a register (inverse of MOV3 operation). It also relies on a branch op code that only banches while we have not added all 25 elements of the 5x5 matrices.
 
+The start value of the matrices should be dividable by 4 as to optimize the usage of the cache.
+
 mem[0..50] reserved for the program operations.
 
 mem[50..74] matrix 0.
@@ -48,6 +50,42 @@ mem[75..99] matrix 1.
 mem[100..124] matrix additon result.
 
 Matrices are stored in memory one column after the other. 
+
+New op code (8) required to read from memory into a register required logic adjustments to a copy of mov3,
+and followed the memory read process used in S1 ( instruction fetch)
+
+New op code (9) required to compare a register value (counter in this case) to see if equal to the value found in a register. It is a variation of the jz op code. Mods to the ALU were required to implement the comparation logic. The original jz uses the NUM_A port value and checks if it is zero. The new op code uses NUM_B port to check if it is 25 (decimal). This process eliminates the possiblity of jumping both when zero and 25 if we were to use the same port. This limits the use of the ALU to only have two comparators for the jump operation value. Implementation of an op code with witch we can modify the value to compare with is possible but requires more complex hardware and can be avoided by the specific case we are testing (5x5 matrices).
+
+Test conducted in reference system are positive.
+Code then implemented in cache-system.
+Test yet to be conducted in cache-system.
+
+to test jump instruction,(OP 9) use this in the m9k memory file: 
+
+  0 : 3019;	   		
+	1 : 9008;			
+	2 : 8150;			
+	3 : 3301;			
+	4 : 1032;			
+	5 : 1133;			
+	6 : 1164;			
+	7 : 4100;			
+	8 : 0064;
+
+to test (OP 8), use something like this: 
+
+
+  0 : 3104;	   		
+	1 : 3205;			
+	2 : 8150;			
+	3 : xxxx;			
+	
+
+
+
+
+
+
 
 ### Cache Memory
 Have implemented a cache controller interface between the SimpleCompArch and cache memory. 
