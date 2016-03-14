@@ -85,7 +85,8 @@ to test (OP 8), use something like this:
 	
 ![OP 8](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OP8.png?token=ANNZ93U40xoMfHPDB7KI9NbXAlVtG3XYks5W7sQzwA%3D%3D)
 
-
+NEW UPDATE COMING SOON WITH SIMPLER, BETTER WAY TO IMPLEMENT THE JUMP FOR THE MATRIX. I SHOULD HAVE THOUGHT OF THIS LONG AGO! 
+Instead of a jump at 25, count down from max value to zero. this way we can set the maximum value of the matricies in the software instead of having the hardware hard coded for 1 specific case. Also simplifies the alu and removes the unecessary op code.
 
 
 
