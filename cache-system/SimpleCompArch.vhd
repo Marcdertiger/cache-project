@@ -38,6 +38,7 @@ port( sys_clk							:	in std_logic;
 		D_mem_ready : out std_logic;
 		D_mem_ready_controller : out std_logic;
 		D_cache_hit : out std_logic;
+		D_TRAM_tag : out std_logic_vector(9 downto 0);
 		
 		D_rf_0						: out std_logic_vector(15 downto 0);
 --		D_rf_1						: out std_logic_vector(15 downto 0);
@@ -132,6 +133,7 @@ Unit2: cache_controller port map(
 	mdout_bus,
 	mem_ready,
 	cache_hit,
+	D_TRAM_tag,
 	D_tag_table_0,
 	D_tag_table_1,
 	D_tag_table_2,
