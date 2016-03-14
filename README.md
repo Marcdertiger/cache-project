@@ -93,9 +93,9 @@ to test (OP 8), use something like this:
 Have implemented a cache controller interface between the SimpleCompArch and cache memory. 
 On memory access, it checks it the tag is in TRAM. Then can read and write to SRAM.
 The Fibonacci series outputs 0,1,1,2,3,5 as expected.
-![Fibonacci 1]()
-![Fibonacci 2]()
-![Fibonacci 3]()
+![Fibonacci 1](https://raw.githubusercontent.com/davejmurphy/cache-project/master/Testing_cacheWithFibonacci_works0.PNG?token=AL-sqxjumVluAzGfU-AcEjuLEdfbIqFDks5W7zlFwA%3D%3D)
+![Fibonacci 2](https://raw.githubusercontent.com/davejmurphy/cache-project/master/Testing_cacheWithFibonacci_works1.PNG?token=AL-sq9vn6xaMqunx_Uq66QdrdQYmne6Tks5W7zlcwA%3D%3D)
+![Fibonacci 3](https://raw.githubusercontent.com/davejmurphy/cache-project/master/Testing_cacheWithFibonacci_works2.PNG?token=AL-sq_VJVX3tAIVDJ6ZnDPDUQ7Wx-alzks5W7zltwA%3D%3D)
 
 
 Currently program counter and D_mem_addr are the same thing.
