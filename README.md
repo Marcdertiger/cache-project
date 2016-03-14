@@ -67,7 +67,7 @@ TEST1:
 
 TEST2:
 
-![newOP+RestoredJZ](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OPcode8Works-restoredoriginaljump.PNG?token=ANNZ923343glf3smbJNYors4yWKMxFDjks5W8F4-wA%3D%3D)
+![newOP+RestoredJZ](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OPcode8Works-restoredoriginaljump.PNG?token=ANNZ90iPkZ8zaZwaymDIYJZMWfEaiuO9ks5W8GBgwA%3D%3D)
 Test code for this one:
 
 	0 : 3104;	   		
