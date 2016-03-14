@@ -56,6 +56,7 @@ and followed the memory read process used in S1 ( instruction fetch)
 
 to test (OP 8), use something like this: 
 
+TEST1:
 
   0 : 3104;	   		
 	1 : 3205;			
@@ -64,10 +65,21 @@ to test (OP 8), use something like this:
 	
 ![OP 8](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OP8.png?token=ANNZ93U40xoMfHPDB7KI9NbXAlVtG3XYks5W7sQzwA%3D%3D)
 
-NEW UPDATE COMING SOON WITH SIMPLER, BETTER WAY TO IMPLEMENT THE JUMP FOR THE MATRIX. I SHOULD HAVE THOUGHT OF THIS LONG AGO! 
-Instead of a jump at 25, count down from max value to zero. this way we can set the maximum value of the matricies in the software instead of having the hardware hard coded for 1 specific case. Also simplifies the alu and removes the unecessary op code.
+TEST2:
+
+![newOP+RestoredJZ](https://raw.githubusercontent.com/davejmurphy/cache-project/master/OPcode8Works-restoredoriginaljump.PNG?token=ANNZ923343glf3smbJNYors4yWKMxFDjks5W8F4-wA%3D%3D)
+Test code for this one:
+
+	0 : 3104;	   		
+	1 : 3205;			
+	2 : 8150;			
+	3 : 6400;			
+	4 : 1032;
+	5 : xxxx;
+
+New program counter method for the matrix code implemented, required no additional jump op code.
 Reference-system - updated
-Cache-system - pending
+Cache-system - pending removal of parasitic code
 
 
 ### Cache Memory
