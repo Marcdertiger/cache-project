@@ -51,10 +51,9 @@ begin
 	begin
 		if (jpsign = '1' and alu_tmp = ZERO) then
 			ALUz <= '1';
-		else
-			if (jpsign = '1' and alu_tmp1 = 25) then
+		elsif (jpsign = '1' and alu_tmp1 = 25) then
 			ALUz <= '1';
-			else
+		else
 			ALUz <= '0';
 		end if;
 		

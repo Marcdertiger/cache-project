@@ -5,6 +5,8 @@ force reset 1 0, 0 400
 force clken 1
 force mem_ready_controller 1 600
 force address 16#009
+force rden 1
+force wren 0
 add wave clock
 add wave reset
 add wave address

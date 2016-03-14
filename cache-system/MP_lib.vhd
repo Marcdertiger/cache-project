@@ -169,7 +169,8 @@ port (
 		data_in	:	in std_logic_vector(15 downto 0);
 		data_out:	out std_logic_vector(15 downto 0);
 		mem_data_in : in std_logic_vector(63 downto 0);
-		cache_hit : in std_logic;
+		write_to_word : in std_logic;
+		write_to_block : in std_logic;
 
 		D_Line0 : out std_logic_vector(63 downto 0);
 		D_Line1 : out std_logic_vector(63 downto 0);

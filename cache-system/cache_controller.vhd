@@ -69,7 +69,7 @@ END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S3, S_MEM1, S_MEM2);
+type state_type is ( S0,S1,S2, S3, S_MEM1, S_Delay1,S_Delay2, S_MEM2);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -89,6 +89,8 @@ signal MAIN_output_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
 signal MAIN_input_data : STD_LOGIC_VECTOR (63 DOWNTO 0);
 
 signal cache_hit  : std_logic;
+signal write_to_word : std_logic;
+signal write_to_block : std_logic;
 
 signal cache_line0 : std_logic_vector(63 downto 0);
 signal cache_line1 : std_logic_vector(63 downto 0);
@@ -106,6 +108,8 @@ begin
 		TRAM_write <= '0';
 		TRAM_tag <= address(11 downto 2);
 		state <= S0;
+		write_to_word <= '0';
+		write_to_block <= '0';
 		
 	elsif mem_ready_controller = '0' then
 		cache_controller_state <= x"F";
@@ -121,6 +125,8 @@ begin
 				
 				-- Clear SRAM write;
 				SRAM_write <= '0';
+				write_to_word <= '0';
+				write_to_block <= '0';
 				
 				--read from tag_table in TRAM
 				TRAM_read  <= '1';
@@ -147,6 +153,8 @@ begin
 					cache_controller_state <= x"2";
 					SRAM_read  <= '0';
 					SRAM_write <= '1';
+					write_to_word <= '1';
+					write_to_block <= '0';
 					SRAM_word  <= address(1 downto 0);
 				end if;
 				
@@ -154,59 +162,50 @@ begin
 				state <= S2;
 			--end HIT
 				else			
-					--else
 					--cache MISS
 					cache_controller_state <= x"B";
 					MAIN_read <= '1'; -- read memory
 					MAIN_write <= '0';
+					
+					-- Write to TRAM;
+					TRAM_write <= '1';
+					TRAM_read <= '0';
+					 
 					state <= S_MEM1;
-					
-	--			1. MEMORY read
-	--				returns block of data (64 bits)
-	--			2. CACHE write
-	--				SRAM_read <= '0';
-	--				SRAM_write <= '1';
-	--				TRAM_write <='1';
-	--				TRAM_read <= '0';		
-					
-				
-				end if;
 				--end MISS
-			
+				end if;
+					
 			when S2 =>
 				cache_controller_state <= x"2";
 				
 				--shut off read
 				SRAM_read  <= '0';
 				SRAM_write <= '0';
+				
 				mem_ready <= '1';
 				state <= S0;
 				
 			when S3 =>
 				cache_controller_state <= x"4";
-				--do we need q <= SRAM...data; ??
-				--q <= SRAM_output_data;
 				state <= S0;
 				
 			when S_MEM1 =>
-				cache_controller_state <= x"C";
-				
-				-- Write to TRAM;
-				TRAM_write <= '1';
-				TRAM_READ <= '0';
-				
-				-- q <= MaiN_output_data;
-				state <= S_MEM2;
-			when S_MEM2 =>
-				cache_controller_state <= x"D";
-				
 				-- Clear TRAM controls;
 				TRAM_write <= '0';
 				TRAM_READ <= '0';
+				cache_controller_state <= x"C";
+				state <= S_MEM2;
+				
+			when S_MEM2 =>
+				cache_controller_state <= x"D";
 					
 				--Write to SRAM;
 				SRAM_write <= '1';
 				SRAM_read <= '0';
+				write_to_word <= '0';
+				write_to_block <= '1';
+	
+				
 				
 				state <= S0;				
 			when others =>
@@ -252,7 +251,8 @@ Unit3: SRAM port map(
 		data,
 		q,
 		MAIN_output_data,
-		cache_hit,
+		write_to_word,
+		write_to_block,
 		cache_line0,
 		cache_line1,
 		cache_line2,
