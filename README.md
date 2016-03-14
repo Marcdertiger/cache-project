@@ -80,7 +80,8 @@ The Fibonacci series outputs 0,1,1,2,3,5 as expected.
 
 
 Currently program counter and D_mem_addr are the same thing.
-Main memory is NOT included yet.
+Main memory can read.
+3050...F000 program will be read from memory into cache. This will then execute, but a problem arises when cache memory is being written to (command 7050) as it seems to write to some random location is being written to.
 
 Number of cycles:
 WAIT_STATE: can SAVE one clock cycle with customized 
