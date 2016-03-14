@@ -37,7 +37,7 @@ add wave -noupdate /simplecomparch/D_rf_0
 add wave -noupdate /simplecomparch/D_tag_table_0
 add wave -noupdate /simplecomparch/D_tag_table_1
 add wave -noupdate /simplecomparch/D_tag_table_2
-
+add wave -noupdate /simplecomparch/D_TRAM_tag
 add wave -noupdate /simplecomparch/D_line0
 add wave -noupdate /simplecomparch/D_line1
 
