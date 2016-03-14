@@ -24,7 +24,6 @@ constant halt  : std_logic_vector(3 downto 0) := "1111";
 constant readm  : std_logic_vector(3 downto 0) := "0111";
 
 constant mov5 : std_logic_vector(3 downto 0) := "1000"; --new op code to move mem[Reg1]-> Reg2
-constant jz25  : std_logic_vector(3 downto 0) := "1001"; -- new op code to jump if Reg1 value smaller than 25
 
 component CPU is
 port (	

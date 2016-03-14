@@ -41,7 +41,7 @@ end controller;
 architecture fsm of controller is
 
   type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE,S12,S12a,S12b,S13,S13a,S13b);
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE,S12,S12a,S12b);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -107,7 +107,6 @@ begin
 			    when halt =>	state <= S10; 
 			    when readm => 	state <= S11;
 				 when mov5 =>	state <= S12;
-				 when jz25 =>  state <= S13;
 			    when others => 	state <= S1;
 			    end case;
 					
@@ -235,6 +234,7 @@ begin
 			current_state <= x"B9";
 			jmpen_ctrl <= '0';
 	      state <= S1;
+			
 	  when S10 =>	
 			current_state <= x"0A";
 			state <= S10; -- halt
@@ -277,12 +277,13 @@ begin
 			RFr2e_ctrl <= '0';		
 			RFs_ctrl <= "01";		
 			Mwe_ctrl <= '0';
-			next_state <= S12a;
-			state <= WAIT_STATE;
+			--next_state <= S12a;
+			--state <= WAIT_STATE;
+			state<=S12a;
 			
 	  when S12a =>   		
 	  current_state <= x"AC";
-			
+			Mre_ctrl <= '0';
 			RFs_ctrl <= "01";	
 			RFwa_ctrl <= IR_word(7 downto 4);
 			RFwe_ctrl <= '1';
@@ -295,27 +296,7 @@ begin
 			Mwe_ctrl <= '0';
 			state <= S1;
 		
-		-- this should jump only if register 
-		-- copied jz code as a starting point
-		-- Only difference is that ALUs_ctrl is on data b now and that port has an
-		-- extra signal that compared with the value 25. This is to remove possibility
-		-- of jumping if zero.
 		
-		
-		when S13 =>	 
-			current_state <= x"0D";
-			jmpen_ctrl <= '1';
-			RFr2a_ctrl <= IR_word(11 downto 8);	
-			RFr2e_ctrl <= '1'; -- jz if R[rn] = 0
-			ALUs_ctrl <= "01";
-			state <= S13a;
-	  when S13a =>   
-			current_state <= x"AD";
-			state <= S13b;
-	  when S13b =>   
-			current_state <= x"BD";
-			jmpen_ctrl <= '0';
-	      state <= S1;
 		
 		
 		
