@@ -131,7 +131,12 @@ component cache_controller is
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
 		mem_ready	 : OUT std_logic;
-		D_cache_hit : OUT std_logic
+		D_cache_hit : OUT std_logic;
+		D_tag_table_0 : out std_logic_vector(9 downto 0);
+		D_tag_table_1 : out std_logic_vector(9 downto 0);
+		D_tag_table_2 : out std_logic_vector(9 downto 0);
+		D_Line0 : out std_logic_vector(63 downto 0);
+		D_Line1 : out std_logic_vector(63 downto 0)
 	);
 end component;
 component TRAM is

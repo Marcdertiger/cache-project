@@ -40,21 +40,27 @@ port( sys_clk							:	in std_logic;
 		D_cache_hit : out std_logic;
 		
 		D_rf_0						: out std_logic_vector(15 downto 0);
-		D_rf_1						: out std_logic_vector(15 downto 0);
-		D_rf_2						: out std_logic_vector(15 downto 0);
-		D_rf_3						: out std_logic_vector(15 downto 0);
-		D_rf_4						: out std_logic_vector(15 downto 0);
-		D_rf_5						: out std_logic_vector(15 downto 0);
-		D_rf_6						: out std_logic_vector(15 downto 0);
-		D_rf_7						: out std_logic_vector(15 downto 0);
-		D_rf_8						: out std_logic_vector(15 downto 0);
-		D_rf_9						: out std_logic_vector(15 downto 0);
-		D_rf_10						: out std_logic_vector(15 downto 0);
-		D_rf_11						: out std_logic_vector(15 downto 0);
-		D_rf_12						: out std_logic_vector(15 downto 0);
-		D_rf_13						: out std_logic_vector(15 downto 0);
-		D_rf_14						: out std_logic_vector(15 downto 0);
-		D_rf_15						: out std_logic_vector(15 downto 0)
+--		D_rf_1						: out std_logic_vector(15 downto 0);
+--		D_rf_2						: out std_logic_vector(15 downto 0);
+--		D_rf_3						: out std_logic_vector(15 downto 0);
+--		D_rf_4						: out std_logic_vector(15 downto 0);
+--		D_rf_5						: out std_logic_vector(15 downto 0);
+--		D_rf_6						: out std_logic_vector(15 downto 0);
+--		D_rf_7						: out std_logic_vector(15 downto 0);
+--		D_rf_8						: out std_logic_vector(15 downto 0);
+--		D_rf_9						: out std_logic_vector(15 downto 0);
+--		D_rf_10						: out std_logic_vector(15 downto 0);
+--		D_rf_11						: out std_logic_vector(15 downto 0);
+--		D_rf_12						: out std_logic_vector(15 downto 0);
+--		D_rf_13						: out std_logic_vector(15 downto 0);
+--		D_rf_14						: out std_logic_vector(15 downto 0);
+--		D_rf_15						: out std_logic_vector(15 downto 0);
+		
+		D_tag_table_0 : out std_logic_vector(9 downto 0);
+		D_tag_table_1 : out std_logic_vector(9 downto 0);
+		D_tag_table_2 : out std_logic_vector(9 downto 0);
+		D_Line0 : out std_logic_vector(63 downto 0);
+		D_Line1 : out std_logic_vector(63 downto 0)
 
 		-- end debug variables	
 );
@@ -125,7 +131,12 @@ Unit2: cache_controller port map(
 	Mwe,
 	mdout_bus,
 	mem_ready,
-	cache_hit);
+	cache_hit,
+	D_tag_table_0,
+	D_tag_table_1,
+	D_tag_table_2,
+	D_Line0,
+	D_Line1);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -143,21 +154,21 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_cache_hit <= cache_hit;
 	-- Register file debugging
 	D_rf_0 <= rf_tmp(0);	
-	D_rf_1 <= rf_tmp(1);	
-	D_rf_2 <= rf_tmp(2);	
-	D_rf_3 <= rf_tmp(3);	
-	D_rf_4 <= rf_tmp(4);	
-	D_rf_5 <= rf_tmp(5);	
-	D_rf_6 <= rf_tmp(6);	
-	D_rf_7 <= rf_tmp(7);
-	D_rf_8 <= rf_tmp(8);	
-	D_rf_9 <= rf_tmp(9);	
-	D_rf_10 <= rf_tmp(10);	
-	D_rf_11 <= rf_tmp(11);	
-	D_rf_12 <= rf_tmp(12);
-	D_rf_13 <= rf_tmp(13);	
-	D_rf_14 <= rf_tmp(14);	
-	D_rf_15 <= rf_tmp(15);
+--	D_rf_1 <= rf_tmp(1);	
+--	D_rf_2 <= rf_tmp(2);	
+--	D_rf_3 <= rf_tmp(3);	
+--	D_rf_4 <= rf_tmp(4);	
+--	D_rf_5 <= rf_tmp(5);	
+--	D_rf_6 <= rf_tmp(6);	
+--	D_rf_7 <= rf_tmp(7);
+--	D_rf_8 <= rf_tmp(8);	
+--	D_rf_9 <= rf_tmp(9);	
+--	D_rf_10 <= rf_tmp(10);	
+--	D_rf_11 <= rf_tmp(11);	
+--	D_rf_12 <= rf_tmp(12);
+--	D_rf_13 <= rf_tmp(13);	
+--	D_rf_14 <= rf_tmp(14);	
+--	D_rf_15 <= rf_tmp(15);
 	
 -- end debug variables		
 		
