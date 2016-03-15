@@ -1,7 +1,7 @@
 vsim work.simplecomparch
 
 force sys_clk 1 0, 0 100 -r 200 
-force sys_rst 1 0, 0 400
+force sys_rst 1 0, 0 600
 
 onerror {resume}
 quietly WaveActivateNextPane {} 0
@@ -28,6 +28,7 @@ add wave -noupdate /simplecomparch/D_mem_addr
 add wave -noupdate /simplecomparch/D_Mre
 add wave -noupdate /simplecomparch/D_Mwe
 add wave -noupdate /simplecomparch/D_current_state
+add wave -noupdate /simplecomparch/D_cache_controller_state
 add wave -noupdate /simplecomparch/D_IR_word
 add wave -noupdate /simplecomparch/D_mem_ready
 add wave -noupdate /simplecomparch/D_mem_ready_controller

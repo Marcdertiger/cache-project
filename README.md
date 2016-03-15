@@ -2,7 +2,7 @@
 
 ## Getting Started
 This project does not have a quartus qsf file. Therefore we need to reconfigure the Quartus project
-to use ModelSim and VHDL, and also change the directory for simulation from simulation/modelsim to ./modelsim
+to use ModelSim and VHDL, and also change the directory for simulation to simulation/modelsim
 
 ## Reference System
 
@@ -92,8 +92,12 @@ The Fibonacci series outputs 0,1,1,2,3,5 as expected.
 
 
 Currently program counter and D_mem_addr are the same thing.
-Main memory can read.
-3050...F000 program will be read from memory into cache. This will then execute, but a problem arises when cache memory is being written to (command 7050) as it seems to write to some random location is being written to.
+Main memory can read and write.
+
+optimizing:
+In cache-controller, state 'D' should be able to go directly to state '2'. Just requires a TRAM tag read which should be already outputting.
+
+Main_read could be triggered earlier - in state s0 instead of s1
 
 Number of cycles:
 WAIT_STATE: can SAVE one clock cycle with customized 

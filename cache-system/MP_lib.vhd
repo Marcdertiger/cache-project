@@ -137,15 +137,16 @@ component cache_controller is
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
 		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0)
+		D_Line1 : out std_logic_vector(63 downto 0);
+		D_cache_controller_state : out std_logic_vector(3 downto 0)
 	);
 end component;
 component TRAM is
 port ( 	
 		clock		: 	in std_logic;
 		rst		: 	in std_logic;
-		Mre		:	in std_logic;
-		Mwe		:	in std_logic;
+		TRAM_read		:	in std_logic;
+		TRAM_write		:	in std_logic;
 		tag 		: 	in std_logic_vector(9 downto 0);
 		data_out :	out std_logic_vector(2 downto 0);
 		

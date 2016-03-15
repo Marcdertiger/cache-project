@@ -61,7 +61,8 @@ port( sys_clk							:	in std_logic;
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
 		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0)
+		D_Line1 : out std_logic_vector(63 downto 0);
+		D_cache_controller_state : out std_logic_vector(3 downto 0)
 
 		-- end debug variables	
 );
@@ -138,7 +139,8 @@ Unit2: cache_controller port map(
 	D_tag_table_1,
 	D_tag_table_2,
 	D_Line0,
-	D_Line1);
+	D_Line1,
+	D_cache_controller_state);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 

@@ -25,8 +25,8 @@ entity tram is
 port ( 	
 		clock		: 	in std_logic;
 		rst		: 	in std_logic;
-		Mre		:	in std_logic;
-		Mwe		:	in std_logic;
+		TRAM_read		:	in std_logic;
+		TRAM_write		:	in std_logic;
 		tag 		: 	in std_logic_vector(9 downto 0);
 		data_out :	out std_logic_vector(2 downto 0);
 		
@@ -53,7 +53,7 @@ signal tag_table : tag_type;
 signal FIFO_Index : integer := 0;
 
 begin
-	write: process(clock, rst, Mre, tag)
+	write: process(clock, rst, TRAM_read, tag)
 	begin							
 		if rst='1' then		
 			tag_table <= (
@@ -70,7 +70,8 @@ begin
 			);
 			FIFO_Index <= 0;
 		elsif (clock'event and clock = '1') then
-				if (Mwe ='1' and Mre = '0') then
+				--if (TRAM_write ='1' and TRAM_read = '0') then
+				if (TRAM_write ='1') then
 					if (FIFO_Index = 8) then 
 						tag_table(0) <= tag;
 						FIFO_Index <= 1;
@@ -82,7 +83,7 @@ begin
 		end if;
 	end process;
 
-   read: process(clock, rst, Mwe, tag)
+   read: process(clock, rst, TRAM_write, tag)
 	begin
 		if rst='1' then
 			data_out <= "001";
@@ -98,13 +99,6 @@ begin
 			end if;
 		end if;		
 	end process;
-	
---	cache_hit_process: process(clock, cache_hit)
---	begin
---		if (clock'event and clock = '1' and cache_hit = '1') then
---			cache_hit <= '0';
---		end if;		
---	end process;
 	
 	D_FIFO_Index <= std_logic_vector(to_unsigned(FIFO_Index, D_FIFO_Index'length));
 	

@@ -22,11 +22,7 @@ ADDRESS_RADIX=UNS;
 DATA_RADIX=HEX;
 
 CONTENT BEGIN
-	--3x3 matrix addition
-	0 : 0040; 			-- R0 <- M[40]
-	
-	
-	
+
 	0 : 3002;	   		-- R0 <- #2			-> x(2)=2
 	1 : 3101;			-- R1 <- #1			-> to increment by 1 and y(0) - 1
 	2 : 3203;			-- R2 <- #3			-> y(1) = 3

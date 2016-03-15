@@ -69,7 +69,7 @@ END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S3, S_MEM1, S1_delay, S_MEM2);
+type state_type is ( S0,S1,S2, S_MEM1, S_MEM2);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -102,7 +102,7 @@ begin
 process (clock, reset, address)
 begin
 	SRAM_word <= address(1 downto 0);
-
+	TRAM_tag <= address(11 downto 2);
 	if reset='1' then
 		TRAM_read  <= '0';
 		TRAM_write <= '0';
@@ -131,41 +131,38 @@ begin
 				--read from tag_table in TRAM
 				TRAM_read  <= '1';
 				TRAM_write <= '0';
-				TRAM_tag <= address(11 downto 2);
-				state <= S1_delay;
+				state <= S1;
 				
 			--delay to account for writing to memory
 			-- with instruction mov2
-			when S1_delay =>
-				state <= S1;
 				
 			when S1 =>
 				
-				TRAM_read  <= '0';
-				TRAM_write <= '0';
-			
-			--CHECK cache miss or hit
-			if (cache_hit = '1') then
-			--on cache HIT
-				--read
-				if(rden = '1' and wren = '0') then
-					cache_controller_state <= x"1";
-					SRAM_read  <= '1';
-					SRAM_write <= '0';
-					SRAM_word  <= address(1 downto 0);
+				--CHECK cache miss or hit
+				if (cache_hit = '1') then
+				--on cache HIT
 				
-				elsif(rden = '0' and wren = '1') then
-					cache_controller_state <= x"2";
-					SRAM_read  <= '0';
-					SRAM_write <= '1';
-					write_to_word <= '1';
-					write_to_block <= '0';
-					SRAM_word  <= address(1 downto 0);
-				end if;
-				
-				
-				state <= S2;
-			--end HIT
+					TRAM_read  <= '0';
+					TRAM_write <= '0';
+					--read
+					if(rden = '1' and wren = '0') then
+						cache_controller_state <= x"1";
+						SRAM_read  <= '1';
+						SRAM_write <= '0';
+						SRAM_word  <= address(1 downto 0);
+					
+					elsif(rden = '0' and wren = '1') then
+						cache_controller_state <= x"2";
+						SRAM_read  <= '0';
+						SRAM_write <= '1';
+						write_to_word <= '1';
+						write_to_block <= '0';
+						SRAM_word  <= address(1 downto 0);
+					end if;
+					
+					
+					state <= S2;
+				--end HIT
 				else			
 					--cache MISS
 					cache_controller_state <= x"B";
@@ -179,7 +176,7 @@ begin
 					state <= S_MEM1;
 				--end MISS
 				end if;
-					
+						
 			when S2 =>
 				cache_controller_state <= x"2";
 				
@@ -190,14 +187,10 @@ begin
 				mem_ready <= '1';
 				state <= S0;
 				
-			when S3 =>
-				cache_controller_state <= x"4";
-				state <= S0;
-				
 			when S_MEM1 =>
 				-- Clear TRAM controls;
 				TRAM_write <= '0';
-				TRAM_READ <= '0';
+				TRAM_read <= '0';
 				cache_controller_state <= x"C";
 				state <= S_MEM2;
 				
@@ -231,7 +224,8 @@ Unit1: memory_4KB port map(
 Unit2: TRAM port map(
 		clock,
 		reset,
-		TRAM_read,
+		--TRAM_read,
+		'1',	-- forcing to 1 to always read TRAM tag from address line
 		TRAM_write,
 		TRAM_tag,
 		TRAM_data_out,
