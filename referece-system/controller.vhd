@@ -40,8 +40,8 @@ end controller;
 
 architecture fsm of controller is
 
-  type state_type is (  S0,S1,S1a,S1b,S2,S3,S3a,S3b,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,WAIT_STATE,S12,S12a,S12b);
+  type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE,S12,S12a,S12b);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -79,10 +79,11 @@ begin
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
 			oe_ctrl <= '0';
-			next_state <= S1a;
-			
-			--mem_ready_controller <= '1';
+			next_state <= S1wait;
 			state <= WAIT_STATE;
+		when S1wait =>
+			current_state <= x"C1";
+			state <= S1a;
 		when S1a => 
 			current_state <= x"A1";
 	      IRld_ctrl <= '0';
@@ -106,7 +107,7 @@ begin
 			    when jz =>		state <= S9;
 			    when halt =>	state <= S10; 
 			    when readm => 	state <= S11;
-				 when mov5 =>	state <= S12;
+                when mov5 =>	state <= S12;
 			    when others => 	state <= S1;
 			    end case;
 					
@@ -117,8 +118,11 @@ begin
 			Ms_ctrl <= "01";
 			Mre_ctrl <= '1';
 			Mwe_ctrl <= '0';		  
-			next_state <= S3a;
+			next_state <= S3wait;
 			state <= WAIT_STATE;
+		when S3wait =>
+			current_state <= x"c3";
+			state <= S3a;
 	  when S3a =>   
 			current_state <= x"A3";
 			RFwe_ctrl <= '1'; 
@@ -160,8 +164,8 @@ begin
 			state <= S5a;
 	  when S5a =>   
 			current_state <= x"A5";
-			Mre_ctrl <= '1';-- read memory 			
-			Mwe_ctrl <= '0'; 
+			Mre_ctrl <= '0';			
+			Mwe_ctrl <= '1'; -- write into memory
 			next_state <= S5b;
 			state <= WAIT_STATE;
 	  when S5b => 	
@@ -234,7 +238,6 @@ begin
 			current_state <= x"B9";
 			jmpen_ctrl <= '0';
 	      state <= S1;
-			
 	  when S10 =>	
 			current_state <= x"0A";
 			state <= S10; -- halt
@@ -242,27 +245,19 @@ begin
 	  when S11 =>   
 			current_state <= x"0B";
 			Ms_ctrl <= "01";
-			Mre_ctrl <= '1'; -- | now write to R2 instead of memory 
+			Mre_ctrl <= '1'; -- read memory
 			Mwe_ctrl <= '0';
-			next_state <= S11a;
-			state <= WAIT_STATE;	
+			next_state <= S11wait;
+			state <= WAIT_STATE;		  
+		when S11wait =>
+			current_state <= x"CB";
+			state <= S11a;
 	  when S11a =>  
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
 			state <= S1;
-	
-	-- A 
-		when WAIT_STATE =>	
-			if (mem_ready = '1') then
-				count <= count + 1;
-				if (count = 1) then
-					state <= next_state;
-					count <= 0;
-				end if;
-			end if;
-		
-		
-		-- this should do : R2 <= mem[RF[r1]] (inverse of MOV3)
+            
+      -- this should do : R2 <= mem[RF[r1]] (inverse of MOV3)
 		-- copied mov3 code as a starting point
 		-- does not work( 10/03/2016 4:45pm ) 
 		-- updated and tested : new works (13/03/2016)
@@ -294,11 +289,18 @@ begin
 			current_state <= x"BC";
 			Ms_ctrl <= "10";-- return
 			Mwe_ctrl <= '0';
-			state <= S1;
-		
-		
-		
-		
+			state <= S1;      
+            
+              
+		-- A 
+		when WAIT_STATE =>	
+			if (mem_ready = '1') then
+				count <= count + 1;
+				if (count = 1) then
+					state <= next_state;
+					count <= 0;
+				end if;
+			end if;
 		
 	  when others =>
 	end case;
