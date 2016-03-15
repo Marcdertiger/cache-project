@@ -169,6 +169,24 @@ begin
 					MAIN_read <= '1'; -- read memory
 					MAIN_write <= '0';
 					
+					-- To write back
+					-- (We need to add a 'dirty' bit to the indexes of the tag)
+					-- if (dirty = '1')
+					-- 	Get old tag from TRAM
+					-- 	Get old data from SRAM
+					-- 	Write SRAM data to TRAM's tag address in Main memory
+					-- 	Read new tag (address) from memory
+					-- else
+					--		Read new tag (address) from memory
+					
+					-- To optimize:
+					-- (create a new process that operates on the 'write_back_flag')
+					-- Read new tag (address) from memory
+					-- pass back control to 'controller'
+					-- while this is happening, 
+					-- 	'cache-controller': write back to memory.
+					-- 	have a 'write_back_flag' in S0 that says when 'memory' is not writing
+					
 					-- Write to TRAM;
 					TRAM_write <= '1';
 					TRAM_read <= '0';
