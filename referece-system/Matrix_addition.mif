@@ -46,7 +46,7 @@ BEGIN
 --loop end
 
 
--- output values here, not written yet (will do once op codes and code above works)
+-- output some values to show code works as intended (delete for simulation)
 	
 
 	
