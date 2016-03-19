@@ -31,7 +31,8 @@ port(
 	ALUz_dp:	out 	std_logic;
 	RF1out_dp:	out 	std_logic_vector(15 downto 0);
 	ALUout_dp:	out 	std_logic_vector(15 downto 0);
-	tmp_rf : out rf_type
+	tmp_rf : out rf_type;
+	jp_en2:		in 	std_logic
 );
 end datapath;
 
@@ -49,7 +50,7 @@ begin
 			RFwa_dp, RFr1a_dp, RFr2a_dp, 
 			mux2rf, rf2alu1, rf2alu2, tmp_rf);
   U3: alu port map( rf2alu1, rf2alu2, jp_en, ALUs_dp, 
-		    ALUz_dp, alu2memmux);
+		    ALUz_dp, alu2memmux,jp_en2);
 			 
   ALUout_dp <= alu2memmux;
   RF1out_dp <= rf2alu1;
