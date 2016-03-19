@@ -9,18 +9,23 @@ add wave -noupdate /simplecomparch/sys_clk
 add wave -noupdate /simplecomparch/sys_rst
 add wave -noupdate /simplecomparch/mem_clk_en
 add wave -noupdate /simplecomparch/sys_output
-add wave -noupdate /simplecomparch/sys_clk_div
+add wave -noupdate /simplecomparch/D_sys_clk_div
 add wave -noupdate /simplecomparch/D_rfout_bus
-add wave -noupdate /simplecomparch/D_RFwa
-add wave -noupdate /simplecomparch/D_RFr1a
-add wave -noupdate /simplecomparch/D_RFr2a
-add wave -noupdate /simplecomparch/D_RFwe
-add wave -noupdate /simplecomparch/D_RFr1e
-add wave -noupdate /simplecomparch/D_RFr2e
-add wave -noupdate /simplecomparch/D_RFs
-add wave -noupdate /simplecomparch/D_ALUs
-add wave -noupdate /simplecomparch/D_PCld
-add wave -noupdate /simplecomparch/D_jpz
+
+add wave -noupdate /simplecomparch/D_dirty_bits
+add wave -noupdate /simplecomparch/D_main_mem_enable
+add wave -noupdate /simplecomparch/D_fifo_index
+
+#add wave -noupdate /simplecomparch/D_RFwa
+#add wave -noupdate /simplecomparch/D_RFr1a
+#add wave -noupdate /simplecomparch/D_RFr2a
+#add wave -noupdate /simplecomparch/D_RFwe
+#add wave -noupdate /simplecomparch/D_RFr1e
+#add wave -noupdate /simplecomparch/D_RFr2e
+#add wave -noupdate /simplecomparch/D_RFs
+#add wave -noupdate /simplecomparch/D_ALUs
+#add wave -noupdate /simplecomparch/D_PCld
+#add wave -noupdate /simplecomparch/D_jpz
 add wave -noupdate /simplecomparch/D_oe
 add wave -noupdate /simplecomparch/D_mdout_bus
 add wave -noupdate /simplecomparch/D_mdin_bus
@@ -77,4 +82,4 @@ WaveRestoreZoom {0 ps} {6468 ps}
 
 radix -hexadecimal
 
-run 5ns
+run 500000ps

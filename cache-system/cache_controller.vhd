@@ -32,6 +32,8 @@ ENTITY cache_controller IS
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
+		D_sys_clk_div : OUT std_logic;
+		D_MAIN_mem_enable : OUT std_logic;
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
@@ -70,7 +72,7 @@ END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S_MEM1, S_MEM2, MAIN_WRITE_STATE);
+type state_type is ( S0,S1,S2, S_MEM1, S_mem1b, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -107,6 +109,13 @@ signal cache : cache_type;
 -- The TRAM tag table
 signal tag_table : tag_type;
 
+signal sys_clk_div		: std_logic;
+signal MAIN_mem_enable : std_logic;
+
+signal count : integer := 0;
+
+signal main_mem_ready : std_logic;
+
 begin
 
 process (clock, reset, address)
@@ -121,6 +130,7 @@ begin
 		write_to_word <= '0';
 		write_to_block <= '0';
 		FIFO_Index <= 0;
+		MAIN_mem_enable <= '0';
 		
 	elsif mem_ready_controller = '0' then
 		cache_controller_state <= x"F";
@@ -144,6 +154,8 @@ begin
 				TRAM_read  <= '1';
 				TRAM_write <= '0';
 				state <= S1;
+				
+				MAIN_mem_enable <= '0';
 				
 			--delay to account for writing to memory
 			-- with instruction mov2
@@ -178,7 +190,7 @@ begin
 				else			
 					--cache MISS
 					
-					
+					MAIN_mem_enable <= '1';
 					
 					-- To write back
 					-- (We need to add a 'dirty' bit to the indexes of the tag)
@@ -207,8 +219,9 @@ begin
 						main_mem_address <= tag_table(FIFO_Index);
 						MAIN_input_data <= cache(FIFO_Index)(0) & cache(FIFO_Index)(1) & cache(FIFO_Index)(2) & cache(FIFO_Index)(3);
 						MAIN_write <= '1';
-						MAIN_read <= '0';
+						MAIN_read <= '0';						
 						dirty_bits(FIFO_Index) <= '0';
+						
 						state <= MAIN_WRITE_STATE;
 						
 					else 
@@ -225,9 +238,6 @@ begin
 						state <= S_MEM1;
 					end if;
 					
-					
-					
-					
 				--end MISS
 				end if;
 						
@@ -242,19 +252,32 @@ begin
 				state <= S0;
 				
 			when S_MEM1 =>
+				cache_controller_state <= x"6";
 				-- Clear TRAM controls;
 				TRAM_write <= '0';
 				TRAM_read <= '0';
 				
-				-- Increment the FIFO Index after a write
-				if (FIFO_Index = 3) then 
-					FIFO_Index <= 0;
-				else 
-					FIFO_Index <= FIFO_Index + 1;						
+				if(main_mem_ready = '0') then
+					state <= S_MEM1;
+				else
+					cache_controller_state <= x"7";
+					state <= S_mem1b;
 				end if;
-
-				cache_controller_state <= x"C";
-				state <= S_MEM2;
+			
+			when S_mem1b =>
+				cache_controller_state <= x"8";
+				if(main_mem_ready = '0') then
+					state <= S_mem1b;
+				else 
+					cache_controller_state <= x"C";
+					-- Increment the FIFO Index after a write
+					if (FIFO_Index = 3) then 
+						FIFO_Index <= 0;
+					else 
+						FIFO_Index <= FIFO_Index + 1;		
+					end if;
+					state <= S_MEM2;
+				end if;
 				
 			when S_MEM2 =>
 				cache_controller_state <= x"D";
@@ -263,28 +286,72 @@ begin
 				SRAM_write <= '1';
 				SRAM_read <= '0';
 				write_to_word <= '0';
-				write_to_block <= '1';
-	
-				
+				write_to_block <= '1';	
 				
 				state <= S0;	
 			
 			when MAIN_WRITE_STATE =>
-				cache_controller_state <= x"6";
-				MAIN_write <= '0';
-				MAIN_read <= '0';
+				cache_controller_state <= x"A";
+				if(main_mem_ready = '0') then
+					state <= MAIN_WRITE_STATE;
+				else
+					cache_controller_state <= x"B";
+					state <= main_write_state_b;
+				end if;
 				
-				state <= S0;
+			when main_write_state_b =>
+				cache_controller_state <= x"C";
+				if(main_mem_ready = '0') then
+					state <= main_write_state_b;
+				else
+					cache_controller_state <= x"D";
+					MAIN_write <= '0';
+					MAIN_read <= '0';
+					state <= S0;
+				end if;
+				
 			when others =>
 		end case;
 	end if;
 
 end process;
 
+--process (clock, MAIN_mem_enable) begin
+--	if (MAIN_mem_enable = '0') then
+--		count <= 0;
+--		sys_clk_div <= '0';
+--	elsif (rising_edge(clock) and MAIN_mem_enable = '1') then
+--			count <= count + 1;
+--			if (count = 3) then 
+--				sys_clk_div <= NOT sys_clk_div;
+--				count <= 0;
+--				if (sys_clk_div = '0') then
+--					main_mem_ready <= '1';
+--				end if;
+--			end if;
+--	end if;
+--end process;
+process (clock, reset) begin
+	if (reset = '1') then
+		count <= 0;
+		sys_clk_div <= '0';
+	elsif (rising_edge(clock)) then
+		main_mem_ready <= '0';
+		count <= count + 1;
+		if (count = 3) then 
+			sys_clk_div <= NOT sys_clk_div;
+			count <= 0;
+			if (sys_clk_div = '0') then
+				main_mem_ready <= '1';
+			end if;
+		end if;
+	end if;
+end process;
+
 Unit1: memory_4KB port map(
 	main_mem_address,
 	'1',
-	clock,
+	sys_clk_div,
 	MAIN_input_data,
 	MAIN_read,
 	MAIN_write,
@@ -337,6 +404,9 @@ Unit3: SRAM port map(
 	D_tag_table_5 <= tag_table(5);
 	D_tag_table_6 <= tag_table(6);
 	D_tag_table_7 <= tag_table(7);
+	
+	D_MAIN_mem_enable <= MAIN_MEm_enable;
+	D_sys_clk_div <= sys_clk_div;
 end fsm;
  
  

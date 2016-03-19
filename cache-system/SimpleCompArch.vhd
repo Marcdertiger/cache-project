@@ -17,7 +17,7 @@ port( sys_clk							:	in std_logic;
 		sys_rst							:	in std_logic;
 		mem_clk_en						: 	in std_logic;
 		sys_output						:	out std_logic_vector(15 downto 0);
-		sys_clk_div						: 	buffer std_logic;
+		D_sys_clk_div						: 	out std_logic;
 		
 		-- Debug signals from CPU: output for simulation purpose only	
 		D_rfout_bus									: out std_logic_vector(15 downto 0);  
@@ -39,6 +39,8 @@ port( sys_clk							:	in std_logic;
 		D_mem_ready_controller : out std_logic;
 		D_cache_hit : out std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
+		
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		
 		D_rf_0						: out std_logic_vector(15 downto 0);
 --		D_rf_1						: out std_logic_vector(15 downto 0);
@@ -77,7 +79,9 @@ port( sys_clk							:	in std_logic;
 
 		D_cache_controller_state : out std_logic_vector(3 downto 0);
 		
-		D_dirty_bits : out std_logic_vector(7 downto 0)
+		D_dirty_bits : out std_logic_vector(7 downto 0);
+		
+		D_Main_mem_enable : out std_logic
 
 		-- end debug variables	
 );
@@ -109,19 +113,6 @@ architecture rtl of SimpleCompArch is
 	begin
 	mem_address_cheat <= x"0" & mem_addr;
 	
-	process (sys_clk, sys_rst) begin
-		if (sys_rst = '1') then
-			count <= 0;
-			sys_clk_div <= '0';
-		elsif (rising_edge(sys_clk)) then
-			count <= count + 1;
-			if (count = 3) then 
-				sys_clk_div <= NOT sys_clk_div;
-				count <= 0;
-			end if;
-		end if;
-	end process;
-
 Unit1: CPU port map (
 	sys_clk,
 	mem_ready,
@@ -145,10 +136,13 @@ Unit2: cache_controller port map(
 	sys_rst,
 	mem_clk_en,
 	sys_clk,
+	D_sys_clk_div,
+	D_Main_mem_enable,
 	mdin_bus,
 	Mre,
 	Mwe,
 	mdout_bus,
+	D_fifo_index,
 	mem_ready,
 	cache_hit,
 	D_TRAM_tag,

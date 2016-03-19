@@ -131,10 +131,13 @@ component cache_controller is
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC;
+		D_sys_clk_div : OUT std_logic;
+		D_main_mem_enable : out std_LOGIC;
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		mem_ready	 : OUT std_logic;
 		D_cache_hit : OUT std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
