@@ -64,15 +64,16 @@ ENTITY cache_controller IS
 		
 		D_cache_hit : out std_logic;
 		
-		D_dirty_bit : out std_logic_vector(7 downto 0)
+		D_dirty_bit : out std_logic_vector(7 downto 0);
 		
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
 		
 	);
 END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S_MEM1, S_mem1b, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
+type state_type is ( S0,S1,S2, S_MEM1, S_mem1b, S_mem1c, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -122,6 +123,7 @@ process (clock, reset, address)
 begin
 	SRAM_word <= address(1 downto 0);
 	TRAM_tag <= address(11 downto 2);
+	D_cache_controller_mem_address <= main_mem_address;
 	if reset='1' then
 		TRAM_read  <= '0';
 		TRAM_write <= '0';
@@ -261,6 +263,14 @@ begin
 					state <= S_MEM1;
 				else
 					cache_controller_state <= x"7";
+					state <= S_mem1c;
+				end if;
+			
+			when S_mem1c =>
+				if(main_mem_ready = '0') then
+					state <= S_mem1c;
+				else
+					cache_controller_state <= x"3";
 					state <= S_mem1b;
 				end if;
 			

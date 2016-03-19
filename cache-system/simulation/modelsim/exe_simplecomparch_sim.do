@@ -60,6 +60,8 @@ add wave -noupdate /simplecomparch/D_cache5
 add wave -noupdate /simplecomparch/D_cache6
 add wave -noupdate /simplecomparch/D_cache7
 
+add wave D_cache_controller_mem_address
+
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}

@@ -153,7 +153,8 @@ component cache_controller is
 		D_cache : out cache_type;
 		
 		D_cache_controller_state : out std_logic_vector(3 downto 0);
-		D_dirty_bit : out std_logic_vector(7 downto 0)
+		D_dirty_bit : out std_logic_vector(7 downto 0);
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
 	);
 end component;
 component TRAM is

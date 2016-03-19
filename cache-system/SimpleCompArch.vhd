@@ -81,7 +81,9 @@ port( sys_clk							:	in std_logic;
 		
 		D_dirty_bits : out std_logic_vector(7 downto 0);
 		
-		D_Main_mem_enable : out std_logic
+		D_Main_mem_enable : out std_logic;
+		
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
 
 		-- end debug variables	
 );
@@ -109,6 +111,7 @@ architecture rtl of SimpleCompArch is
 	signal count : integer:=0;
 	
 	signal cache : cache_type;
+	signal cache_controller_mem_address : std_logic_vector(9 downto 0);
 	
 	begin
 	mem_address_cheat <= x"0" & mem_addr;
@@ -156,7 +159,8 @@ Unit2: cache_controller port map(
 	D_tag_table_7,
 	cache,
 	D_cache_controller_state,
-	D_dirty_bits);
+	D_dirty_bits,
+	cache_controller_mem_address);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -182,9 +186,7 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_cache6 <= cache(6)(0) & cache(6)(1) & cache(6)(2) & cache(6)(3);
 	D_cache7 <= cache(7)(0) & cache(7)(1) & cache(7)(2) & cache(7)(3);
 	
-	
-	
-	
+	D_cache_controller_mem_address <= cache_controller_mem_address;
 	
 	
 	-- Register file debugging
