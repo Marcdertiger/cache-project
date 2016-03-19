@@ -10,6 +10,11 @@ type ram_type is array (0 to 255) of
 				
 type rf_type is array (0 to 15) of 
         std_logic_vector(15 downto 0);
+		  
+type tag_type is array (7 downto 0) of std_logic_vector(9 downto 0);
+
+type cache_line is array (3 downto 0) of std_logic_vector(15 downto 0);
+type cache_type is array (7 downto 0) of cache_line;
 
 constant ZERO : std_logic_vector(15 downto 0) := "0000000000000000";
 constant HIRES : std_logic_vector(15 downto 0) := "ZZZZZZZZZZZZZZZZ";
@@ -136,9 +141,16 @@ component cache_controller is
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_cache_controller_state : out std_logic_vector(3 downto 0)
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0);
+		
+		D_cache : out cache_type;
+		
+		D_cache_controller_state : out std_logic_vector(3 downto 0);
+		D_dirty_bit : out std_logic_vector(7 downto 0)
 	);
 end component;
 component TRAM is
@@ -151,17 +163,11 @@ port (
 		data_out :	out std_logic_vector(2 downto 0);
 		
 		cache_hit : out std_logic;
+		FIFO_Index: in integer;
 		
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		
-		D_tag_table_0 : out std_logic_vector(9 downto 0);
-		D_tag_table_1 : out std_logic_vector(9 downto 0);
-		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_tag_table_3 : out std_logic_vector(9 downto 0);
-		D_tag_table_4 : out std_logic_vector(9 downto 0);
-		D_tag_table_5 : out std_logic_vector(9 downto 0);
-		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0)
+		tag_table : buffer tag_type
 );
 end component;
 
@@ -178,11 +184,7 @@ port (
 		mem_data_in : in std_logic_vector(63 downto 0);
 		write_to_word : in std_logic;
 		write_to_block : in std_logic;
-
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_Line2 : out std_logic_vector(63 downto 0);
-		D_Line3 : out std_logic_vector(63 downto 0)
+		cache		: buffer cache_type
 );
 end component;
 

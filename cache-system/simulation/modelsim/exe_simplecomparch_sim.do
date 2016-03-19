@@ -38,9 +38,22 @@ add wave -noupdate /simplecomparch/D_rf_0
 add wave -noupdate /simplecomparch/D_tag_table_0
 add wave -noupdate /simplecomparch/D_tag_table_1
 add wave -noupdate /simplecomparch/D_tag_table_2
+add wave -noupdate /simplecomparch/D_tag_table_3
+add wave -noupdate /simplecomparch/D_tag_table_4
+add wave -noupdate /simplecomparch/D_tag_table_5
+add wave -noupdate /simplecomparch/D_tag_table_6
+add wave -noupdate /simplecomparch/D_tag_table_7
+
 add wave -noupdate /simplecomparch/D_TRAM_tag
-add wave -noupdate /simplecomparch/D_line0
-add wave -noupdate /simplecomparch/D_line1
+
+add wave -noupdate /simplecomparch/D_cache0
+add wave -noupdate /simplecomparch/D_cache1
+add wave -noupdate /simplecomparch/D_cache2
+add wave -noupdate /simplecomparch/D_cache3
+add wave -noupdate /simplecomparch/D_cache4
+add wave -noupdate /simplecomparch/D_cache5
+add wave -noupdate /simplecomparch/D_cache6
+add wave -noupdate /simplecomparch/D_cache7
 
 
 TreeUpdate [SetDefaultTree]

@@ -25,19 +25,11 @@ port (
 		mem_data_in : in std_logic_vector(63 downto 0);
 		write_to_word : in std_logic;
 		write_to_block : in std_logic;
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_Line2 : out std_logic_vector(63 downto 0);
-		D_Line3 : out std_logic_vector(63 downto 0)
+		cache		: buffer cache_type
 );
 end sram;
 
 architecture behv of sram	 is		
-
-type cache_line is array (3 downto 0) of std_logic_vector(15 downto 0);
-type cache_type is array (7 downto 0) of cache_line;
-
-signal cache : cache_type;
 
 begin
 	write: process(clock, rst, Mre, tag, word, data_in)
@@ -129,10 +121,5 @@ begin
 			end if;
 		end if;
 	end process;
-	
-	D_Line0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
-	D_Line1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
-	D_Line2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
-	D_Line3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
 	
 end behv;

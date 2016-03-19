@@ -60,9 +60,24 @@ port( sys_clk							:	in std_logic;
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_cache_controller_state : out std_logic_vector(3 downto 0)
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0);
+		
+		D_cache0 : out std_logic_vector(63 downto 0);
+		D_cache1 : out std_logic_vector(63 downto 0);
+		D_cache2 : out std_logic_vector(63 downto 0);
+		D_cache3 : out std_logic_vector(63 downto 0);
+		D_cache4 : out std_logic_vector(63 downto 0);
+		D_cache5 : out std_logic_vector(63 downto 0);
+		D_cache6 : out std_logic_vector(63 downto 0);
+		D_cache7 : out std_logic_vector(63 downto 0);
+
+		D_cache_controller_state : out std_logic_vector(3 downto 0);
+		
+		D_dirty_bits : out std_logic_vector(7 downto 0)
 
 		-- end debug variables	
 );
@@ -88,6 +103,8 @@ architecture rtl of SimpleCompArch is
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
+	
+	signal cache : cache_type;
 	
 	begin
 	mem_address_cheat <= x"0" & mem_addr;
@@ -138,9 +155,14 @@ Unit2: cache_controller port map(
 	D_tag_table_0,
 	D_tag_table_1,
 	D_tag_table_2,
-	D_Line0,
-	D_Line1,
-	D_cache_controller_state);
+	D_tag_table_3,
+	D_tag_table_4,
+	D_tag_table_5,
+	D_tag_table_6,
+	D_tag_table_7,
+	cache,
+	D_cache_controller_state,
+	D_dirty_bits);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -156,6 +178,21 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_mem_ready <= mem_ready;
 	D_mem_ready_controller <= mem_ready_controller;
 	D_cache_hit <= cache_hit;
+	
+	D_cache0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
+	D_cache1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
+	D_cache2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
+	D_cache3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
+	D_cache4 <= cache(4)(0) & cache(4)(1) & cache(4)(2) & cache(4)(3);
+	D_cache5 <= cache(5)(0) & cache(5)(1) & cache(5)(2) & cache(5)(3);
+	D_cache6 <= cache(6)(0) & cache(6)(1) & cache(6)(2) & cache(6)(3);
+	D_cache7 <= cache(7)(0) & cache(7)(1) & cache(7)(2) & cache(7)(3);
+	
+	
+	
+	
+	
+	
 	-- Register file debugging
 	D_rf_0 <= rf_tmp(0);	
 --	D_rf_1 <= rf_tmp(1);	

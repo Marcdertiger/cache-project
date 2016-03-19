@@ -32,25 +32,15 @@ port (
 		
 		cache_hit : buffer std_logic;
 		
+		FIFO_Index : in integer;
+		
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		
-		D_tag_table_0 : out std_logic_vector(9 downto 0);
-		D_tag_table_1 : out std_logic_vector(9 downto 0);
-		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_tag_table_3 : out std_logic_vector(9 downto 0);
-		D_tag_table_4 : out std_logic_vector(9 downto 0);
-		D_tag_table_5 : out std_logic_vector(9 downto 0);
-		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0)
+		tag_table : buffer tag_type
 );
 end tram;
 
 architecture behv of tram	 is		
-
-type tag_type is array (7 downto 0) of std_logic_vector(9 downto 0);
-
-signal tag_table : tag_type;
-signal FIFO_Index : integer := 0;
 
 begin
 	write: process(clock, rst, TRAM_read, tag)
@@ -66,19 +56,12 @@ begin
 --				5 => "0000000101",
 --				6 => "0000000110",
 --				7 => "0000000111",
-				others => "1000101001"
+				others => "1111111100"
 			);
-			FIFO_Index <= 0;
 		elsif (clock'event and clock = '1') then
 				--if (TRAM_write ='1' and TRAM_read = '0') then
 				if (TRAM_write ='1') then
-					if (FIFO_Index = 8) then 
-						tag_table(0) <= tag;
-						FIFO_Index <= 1;
-					else 
-						tag_table(FIFO_Index) <= tag;
-						FIFO_Index <= FIFO_Index + 1;						
-					end if;
+					tag_table(FIFO_Index) <= tag;
 				end if;
 		end if;
 	end process;
@@ -101,14 +84,6 @@ begin
 	end process;
 	
 	D_FIFO_Index <= std_logic_vector(to_unsigned(FIFO_Index, D_FIFO_Index'length));
-	
-	D_tag_table_0 <= tag_table(0);
-	D_tag_table_1 <= tag_table(1);
-	D_tag_table_2 <= tag_table(2);
-	D_tag_table_3 <= tag_table(3);
-	D_tag_table_4 <= tag_table(4);
-	D_tag_table_5 <= tag_table(5);
-	D_tag_table_6 <= tag_table(6);
-	D_tag_table_7 <= tag_table(7);
+
 	
 end behv;
