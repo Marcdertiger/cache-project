@@ -300,7 +300,7 @@ begin
 			jmpen_ctrl2 <= '1';
 			jmpen_ctrl <= '0';
 			RFr1a_ctrl <= IR_word(11 downto 8);	
-			RFr1e_ctrl <= '1'; -- jz if R[rn] /= 0
+			RFr1e_ctrl <= '1'; -- jz  R[rn] 
 			ALUs_ctrl <= "00";
 			state <= S13a;
 	  when S13a =>   

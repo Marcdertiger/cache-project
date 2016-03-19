@@ -42,17 +42,19 @@ begin
 	
 	process(jpsign, alu_tmp,jpsign2)
 	begin
-		if (jpsign = '1' and alu_tmp = ZERO) then
+	
+	--for some reason, jz2 jumps all the time
+		if (jpsign = '1' and alu_tmp = ZERO)or(jpsign2 = '1' and (alu_tmp > ZERO)) then
 			ALUz <= '1';
 		else
 			ALUz <= '0';
 		end if;
 		
-		if (jpsign2 = '1' and alu_tmp /= ZERO) then
-			ALUz <= '1';
-		else
-			ALUz <= '0';
-		end if;
+		--if (jpsign2 = '1' and alu_tmp /= ZERO) then
+		--	ALUz <= '1';
+		--else
+		--	ALUz <= '0';
+		--end if;
 	end process;					
 	
 	ALUout <= alu_tmp;

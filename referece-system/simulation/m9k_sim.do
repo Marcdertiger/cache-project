@@ -24,6 +24,8 @@ add wave D_rf_3
 add wave D_rf_4
 add wave D_rf_5
 add wave D_rf_6
+add wave D_rf_7
+add wave D_rf_8
 
 radix -hexadecimal
 
