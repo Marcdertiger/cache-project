@@ -272,9 +272,9 @@ begin
 			RFr2e_ctrl <= '0';		
 			RFs_ctrl <= "01";		
 			Mwe_ctrl <= '0';
-			--next_state <= S12a;
-			--state <= WAIT_STATE;
-			state<=S12a;
+			next_state <= S12a;
+			state <= WAIT_STATE;
+			--state<=S12a;
 			
 	  when S12a =>   		
 	  current_state <= x"AC";
