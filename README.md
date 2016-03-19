@@ -83,6 +83,9 @@ Cache-system - pending removal of parasitic code
 
 
 ### Cache Memory
+
+Our cache is made up of three componenets: the cache controller, sram, and tram. The cache controller coordinates the access to main memory, and the cache memory from the main controller. The TRAM holds the values of the tag's from memory. SRAM holds the data.
+
 Have implemented a cache controller interface between the SimpleCompArch and cache memory. 
 On memory access, it checks it the tag is in TRAM. Then can read and write to SRAM.
 The Fibonacci series outputs 0,1,1,2,3,5 as expected.
@@ -104,4 +107,12 @@ WAIT_STATE: can SAVE one clock cycle with customized
  states for each wait state.
  i.e. execute the next_state when count = 1
 		-> no wasted clock cycles
+		
+## Enhanced System
+To implement the enhanced system we need to make a few modifications to the structure of memory. The cache in the enhanced system fully associative and is 8 lines of 4 16-bit words. In order to implement the block reading from memory we changed the structure from 4096 addresses of 16-bit data, to 1024 addresses of 64-bit data. This way we can load an entire block (or line) at once. 
 
+The cache is managed by the cache controller, when an instruction from the program needs to read or write from memory, it goes through the cache controller. The top 10-bits, or tag, of the memory address are searched in TRAM. 
+
+If the tag is found in TRAM, then we find the index of that tag. The data associated with the tag is located in the same index of SRAM cache line. So the tag's index is used to find the cache line, we then use the bottom 2-bits of the address to find the correct word within the line. The word is then return from the cache_controller as data_out.
+
+If the tag is not found in TRAM, we then determine if the next location in memory is dirty, if it is, we write that value back into memory, and overwrite it with the new memory address. If the cache line is not dirty, then we don't write to memory first. We just overwrite the value with it's new one from memory.
