@@ -76,7 +76,7 @@ architecture rtl of SimpleCompArch is
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
-	signal ExecTime: integer:=0;
+	signal ExecTime : integer:=0;
 	
 	begin
 	mem_address_cheat <= x"0" & mem_addr;
@@ -100,13 +100,10 @@ architecture rtl of SimpleCompArch is
 	
 	
 	process (sys_clk, ExecTime, IR_word) begin
-	
-	   if (IR_word = x"F000")then
-			ExecTime <= ExecTime;
-	
-		else ExecTime <= ExecTime + 1;
-		
-		end if;    
+		  case IR_word(15 downto 12) is
+			    when "1111" => 	ExecTime <= ExecTime;
+			    when others => 	ExecTime <= ExecTime + 1;
+				 end case;
 	end process;	 
 
 	
