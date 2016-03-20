@@ -99,11 +99,16 @@ architecture rtl of SimpleCompArch is
 	end process;
 	
 	
-	process (sys_clk, ExecTime, IR_word) begin
-		  case IR_word(15 downto 12) is
-			    when "1111" => 	ExecTime <= ExecTime;
-			    when others => 	ExecTime <= ExecTime + 1;
-				 end case;
+	process (sys_clk, ExecTime, IR_word)
+	variable OPCODE: std_logic_vector(3 downto 0);
+	begin		
+		if(rising_edge(sys_clk)) then
+			case (IR_word(15 downto 12)) is
+				 when halt =>  Exectime <= ExecTime;
+			    when others =>Exectime <= ExecTime + 1;
+			end case;
+		end if;
+		  
 	end process;	 
 
 	
