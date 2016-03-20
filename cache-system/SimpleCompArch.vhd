@@ -83,7 +83,10 @@ port( sys_clk							:	in std_logic;
 		
 		D_Main_mem_enable : out std_logic;
 		
-		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0);
+		
+		
+		D_ExecTime : out integer
 
 		-- end debug variables	
 );
@@ -96,7 +99,6 @@ architecture rtl of SimpleCompArch is
 	signal mem_addr					: std_logic_vector(7 downto 0);   -- Const. operand addr.(CTRLER	-> MEM)
 	signal Mre								: std_logic;							 			 -- Mem. read enable  	(CTRLER	-> Mem) 
 	signal Mwe								: std_logic;							 			 -- Mem. write enable 	(CTRLER	-> Mem)
-	signal mem_address_cheat : std_logic_vector(11 downto 0);
 	signal current_state			: std_logic_vector(7 downto 0);
 	signal IR_word				:	std_logic_vector(15 downto 0);
 	--System local variables
@@ -109,12 +111,21 @@ architecture rtl of SimpleCompArch is
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
+	signal ExecTime : integer:=0;
 	
 	signal cache : cache_type;
 	signal cache_controller_mem_address : std_logic_vector(9 downto 0);
 	
 	begin
-	mem_address_cheat <= x"0" & mem_addr;
+	
+	process (sys_clk, ExecTime, IR_word) begin
+		if(rising_edge(sys_clk)) then
+		  case IR_word(15 downto 12) is
+			    when "1111" => 	ExecTime <= ExecTime;
+			    when others => 	ExecTime <= ExecTime + 1;
+				 end case;
+		end if;
+	end process;	
 	
 Unit1: CPU port map (
 	sys_clk,
@@ -188,6 +199,7 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	
 	D_cache_controller_mem_address <= cache_controller_mem_address;
 	
+	D_ExecTime <= ExecTime;
 	
 	-- Register file debugging
 	D_rf_0 <= rf_tmp(0);	
