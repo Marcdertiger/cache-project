@@ -25,14 +25,14 @@ port (	num_A: 	in std_logic_vector(15 downto 0);
 		jpsign:	in std_logic;						 -- JMP?	
 		ALUs:	in std_logic_vector(1 downto 0);     -- OP selector
 		ALUz:	out std_logic;                       -- Reached 0!   
-		ALUout:	out std_logic_vector(15 downto 0)    -- final calc value
+		ALUout:	out std_logic_vector(15 downto 0);    -- final calc value
+		jpsign2:	in std_logic						 -- JMP2
 );
 end alu;
 
 architecture behv of alu is
 
 signal alu_tmp: std_logic_vector(15 downto 0);
-signal alu_tmp1: std_logic_vector(15 downto 0);
 
 begin
 
@@ -40,28 +40,38 @@ begin
 	begin			
 		case ALUs is
 		  when "00" => alu_tmp <= num_A;
-		  when "01" => alu_tmp  <= num_B; alu_tmp1 <= num_B;
+		  when "01" => alu_tmp <= num_B;
 		  when "10" => alu_tmp <= num_A + num_B;
 		  when "11" => alu_tmp <= num_A - num_B;
 		  when others =>
 	    end case; 					  
 	end process;
 	
-	process(jpsign, alu_tmp)
+	process(jpsign, alu_tmp,jpsign2)
 	begin
-		if (jpsign = '1' and alu_tmp = ZERO) then
-			ALUz <= '1';
-		elsif (jpsign = '1' and alu_tmp1 = 25) then
+	
+	--for some reason, jz2 jumps all the time
+		if (jpsign = '1' and alu_tmp = ZERO)or(jpsign2 = '1' and (alu_tmp > ZERO)) then
 			ALUz <= '1';
 		else
 			ALUz <= '0';
 		end if;
 		
+		--if (jpsign2 = '1' and alu_tmp /= ZERO) then
+		--	ALUz <= '1';
+		--else
+		--	ALUz <= '0';
+		--end if;
 	end process;					
 	
 	ALUout <= alu_tmp;
 	
 end behv;
+
+
+
+
+
 
 
 

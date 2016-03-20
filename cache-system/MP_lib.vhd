@@ -27,6 +27,9 @@ constant subt : std_logic_vector(3 downto 0) := "0101";
 constant jz  : std_logic_vector(3 downto 0) := "0110";
 constant halt  : std_logic_vector(3 downto 0) := "1111";
 constant readm  : std_logic_vector(3 downto 0) := "0111";
+constant jz2	:  std_logic_vector(3 downto 0) := "1001";
+constant mov5 : std_logic_vector(3 downto 0) := "1000"; --new op code to move mem[Reg1]-> Reg2
+
 
 component CPU is
 port (	
@@ -60,7 +63,8 @@ port (
 		jpsign:	in std_logic;
 		ALUs:	in std_logic_vector(1 downto 0);
 		ALUz:	out std_logic;
-		ALUout:	out std_logic_vector(15 downto 0)
+		ALUout:	out std_logic_vector(15 downto 0);
+		jpsign2: in std_logic
 );
 end component;
 
@@ -98,7 +102,8 @@ port(
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state: out std_logic_vector(7 downto 0);
-	mem_ready_controller: 	out std_logic
+	mem_ready_controller: 	out std_logic;
+	jmpen_ctrl2:	out std_logic
 );
 end component;
 
@@ -262,7 +267,8 @@ port(
 	oe_cu:		out 	std_logic;
 	current_state: out std_logic_vector(7 downto 0);
 	IR_word					: out std_logic_vector(15 downto 0);
-	mem_ready_controller: 	out std_logic
+	mem_ready_controller: 	out std_logic;
+	jpen_cu2:	out 	std_logic
 );
 end component;
 
@@ -284,7 +290,8 @@ port(
 	ALUz_dp:	out 	std_logic;
 	RF1out_dp:	out 	std_logic_vector(15 downto 0);
 	ALUout_dp:	out 	std_logic_vector(15 downto 0);
-	tmp_rf : out rf_type	
+	tmp_rf : out rf_type;
+	jp_en2:		in 	std_logic
 );
 end component;
 
