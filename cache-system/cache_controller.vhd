@@ -281,7 +281,7 @@ begin
 				else 
 					cache_controller_state <= x"C";
 					-- Increment the FIFO Index after a write
-					if (FIFO_Index = 3) then 
+					if (FIFO_Index = 7) then 
 						FIFO_Index <= 0;
 					else 
 						FIFO_Index <= FIFO_Index + 1;		

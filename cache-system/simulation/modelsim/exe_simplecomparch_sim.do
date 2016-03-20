@@ -7,6 +7,9 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate /simplecomparch/sys_clk
 add wave -noupdate /simplecomparch/sys_rst
+
+add wave -noupdate /simplecomparch/D_ExecTime
+
 add wave -noupdate /simplecomparch/mem_clk_en
 add wave -noupdate /simplecomparch/sys_output
 add wave -noupdate /simplecomparch/D_sys_clk_div
