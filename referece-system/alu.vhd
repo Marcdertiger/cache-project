@@ -18,7 +18,8 @@ port (	num_A: 	in std_logic_vector(15 downto 0);
 		jpsign:	in std_logic;						 -- JMP?	
 		ALUs:	in std_logic_vector(1 downto 0);     -- OP selector
 		ALUz:	out std_logic;                       -- Reached 0!   
-		ALUout:	out std_logic_vector(15 downto 0)    -- final calc value
+		ALUout:	out std_logic_vector(15 downto 0);    -- final calc value
+		jpsign2:	in std_logic						 -- JMP?	
 );
 end alu;
 
@@ -39,13 +40,21 @@ begin
 	    end case; 					  
 	end process;
 	
-	process(jpsign, alu_tmp)
+	process(jpsign, alu_tmp,jpsign2)
 	begin
-		if (jpsign = '1' and alu_tmp = ZERO) then
+	
+	--for some reason, jz2 jumps all the time
+		if (jpsign = '1' and alu_tmp = ZERO)or(jpsign2 = '1' and (alu_tmp > ZERO)) then
 			ALUz <= '1';
 		else
 			ALUz <= '0';
 		end if;
+		
+		--if (jpsign2 = '1' and alu_tmp /= ZERO) then
+		--	ALUz <= '1';
+		--else
+		--	ALUz <= '0';
+		--end if;
 	end process;					
 	
 	ALUout <= alu_tmp;

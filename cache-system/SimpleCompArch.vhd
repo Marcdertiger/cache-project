@@ -17,7 +17,7 @@ port( sys_clk							:	in std_logic;
 		sys_rst							:	in std_logic;
 		mem_clk_en						: 	in std_logic;
 		sys_output						:	out std_logic_vector(15 downto 0);
-		sys_clk_div						: 	buffer std_logic;
+		D_sys_clk_div						: 	out std_logic;
 		
 		-- Debug signals from CPU: output for simulation purpose only	
 		D_rfout_bus									: out std_logic_vector(15 downto 0);  
@@ -40,15 +40,17 @@ port( sys_clk							:	in std_logic;
 		D_cache_hit : out std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
 		
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
+		
 		D_rf_0						: out std_logic_vector(15 downto 0);
---		D_rf_1						: out std_logic_vector(15 downto 0);
---		D_rf_2						: out std_logic_vector(15 downto 0);
---		D_rf_3						: out std_logic_vector(15 downto 0);
---		D_rf_4						: out std_logic_vector(15 downto 0);
---		D_rf_5						: out std_logic_vector(15 downto 0);
---		D_rf_6						: out std_logic_vector(15 downto 0);
---		D_rf_7						: out std_logic_vector(15 downto 0);
---		D_rf_8						: out std_logic_vector(15 downto 0);
+		D_rf_1						: out std_logic_vector(15 downto 0);
+		D_rf_2						: out std_logic_vector(15 downto 0);
+		D_rf_3						: out std_logic_vector(15 downto 0);
+		D_rf_4						: out std_logic_vector(15 downto 0);
+		D_rf_5						: out std_logic_vector(15 downto 0);
+		D_rf_6						: out std_logic_vector(15 downto 0);
+		D_rf_7						: out std_logic_vector(15 downto 0);
+		D_rf_8						: out std_logic_vector(15 downto 0);
 --		D_rf_9						: out std_logic_vector(15 downto 0);
 --		D_rf_10						: out std_logic_vector(15 downto 0);
 --		D_rf_11						: out std_logic_vector(15 downto 0);
@@ -60,9 +62,31 @@ port( sys_clk							:	in std_logic;
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_cache_controller_state : out std_logic_vector(3 downto 0)
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0);
+		
+		D_cache0 : out std_logic_vector(63 downto 0);
+--		D_cache1 : out std_logic_vector(63 downto 0);
+--		D_cache2 : out std_logic_vector(63 downto 0);
+--		D_cache3 : out std_logic_vector(63 downto 0);
+--		D_cache4 : out std_logic_vector(63 downto 0);
+--		D_cache5 : out std_logic_vector(63 downto 0);
+--		D_cache6 : out std_logic_vector(63 downto 0);
+--		D_cache7 : out std_logic_vector(63 downto 0);
+
+		D_cache_controller_state : out std_logic_vector(3 downto 0);
+		
+		D_dirty_bits : out std_logic_vector(7 downto 0);
+		
+		D_Main_mem_enable : out std_logic;
+		
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0);
+		
+		
+		D_ExecTime : out integer
 
 		-- end debug variables	
 );
@@ -75,7 +99,6 @@ architecture rtl of SimpleCompArch is
 	signal mem_addr					: std_logic_vector(7 downto 0);   -- Const. operand addr.(CTRLER	-> MEM)
 	signal Mre								: std_logic;							 			 -- Mem. read enable  	(CTRLER	-> Mem) 
 	signal Mwe								: std_logic;							 			 -- Mem. write enable 	(CTRLER	-> Mem)
-	signal mem_address_cheat : std_logic_vector(11 downto 0);
 	signal current_state			: std_logic_vector(7 downto 0);
 	signal IR_word				:	std_logic_vector(15 downto 0);
 	--System local variables
@@ -88,23 +111,22 @@ architecture rtl of SimpleCompArch is
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
+	signal ExecTime : integer:=0;
+	
+	signal cache : cache_type;
+	signal cache_controller_mem_address : std_logic_vector(9 downto 0);
 	
 	begin
-	mem_address_cheat <= x"0" & mem_addr;
 	
-	process (sys_clk, sys_rst) begin
-		if (sys_rst = '1') then
-			count <= 0;
-			sys_clk_div <= '0';
-		elsif (rising_edge(sys_clk)) then
-			count <= count + 1;
-			if (count = 3) then 
-				sys_clk_div <= NOT sys_clk_div;
-				count <= 0;
-			end if;
+	process (sys_clk, ExecTime, IR_word) begin
+		if(rising_edge(sys_clk)) then
+		  case IR_word(15 downto 12) is
+			    when "1111" => 	ExecTime <= ExecTime;
+			    when others => 	ExecTime <= ExecTime + 1;
+				 end case;
 		end if;
-	end process;
-
+	end process;	
+	
 Unit1: CPU port map (
 	sys_clk,
 	mem_ready,
@@ -128,19 +150,28 @@ Unit2: cache_controller port map(
 	sys_rst,
 	mem_clk_en,
 	sys_clk,
+	D_sys_clk_div,
+	D_Main_mem_enable,
 	mdin_bus,
 	Mre,
 	Mwe,
 	mdout_bus,
+	D_fifo_index,
 	mem_ready,
 	cache_hit,
 	D_TRAM_tag,
 	D_tag_table_0,
 	D_tag_table_1,
 	D_tag_table_2,
-	D_Line0,
-	D_Line1,
-	D_cache_controller_state);
+	D_tag_table_3,
+	D_tag_table_4,
+	D_tag_table_5,
+	D_tag_table_6,
+	D_tag_table_7,
+	cache,
+	D_cache_controller_state,
+	D_dirty_bits,
+	cache_controller_mem_address);
 																					
 Unit3: obuf port map(oe, mdout_bus, sys_output);
 
@@ -156,17 +187,31 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_mem_ready <= mem_ready;
 	D_mem_ready_controller <= mem_ready_controller;
 	D_cache_hit <= cache_hit;
+	
+	D_cache0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
+--	D_cache1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
+--	D_cache2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
+--	D_cache3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
+--	D_cache4 <= cache(4)(0) & cache(4)(1) & cache(4)(2) & cache(4)(3);
+--	D_cache5 <= cache(5)(0) & cache(5)(1) & cache(5)(2) & cache(5)(3);
+--	D_cache6 <= cache(6)(0) & cache(6)(1) & cache(6)(2) & cache(6)(3);
+--	D_cache7 <= cache(7)(0) & cache(7)(1) & cache(7)(2) & cache(7)(3);
+	
+	D_cache_controller_mem_address <= cache_controller_mem_address;
+	
+	D_ExecTime <= ExecTime;
+	
 	-- Register file debugging
 	D_rf_0 <= rf_tmp(0);	
---	D_rf_1 <= rf_tmp(1);	
---	D_rf_2 <= rf_tmp(2);	
---	D_rf_3 <= rf_tmp(3);	
---	D_rf_4 <= rf_tmp(4);	
---	D_rf_5 <= rf_tmp(5);	
---	D_rf_6 <= rf_tmp(6);	
---	D_rf_7 <= rf_tmp(7);
---	D_rf_8 <= rf_tmp(8);	
---	D_rf_9 <= rf_tmp(9);	
+	D_rf_1 <= rf_tmp(1);	
+	D_rf_2 <= rf_tmp(2);	
+	D_rf_3 <= rf_tmp(3);	
+	D_rf_4 <= rf_tmp(4);	
+	D_rf_5 <= rf_tmp(5);	
+	D_rf_6 <= rf_tmp(6);	
+	D_rf_7 <= rf_tmp(7);
+	D_rf_8 <= rf_tmp(8);	
+----	D_rf_9 <= rf_tmp(9);	
 --	D_rf_10 <= rf_tmp(10);	
 --	D_rf_11 <= rf_tmp(11);	
 --	D_rf_12 <= rf_tmp(12);

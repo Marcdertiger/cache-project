@@ -20,7 +20,8 @@
 --
 library ieee;
 use ieee.std_logic_1164.all;  
-use ieee.numeric_std.all;			   
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;   			   
 use work.MP_lib.all; 
 
 ENTITY cache_controller IS
@@ -31,6 +32,8 @@ ENTITY cache_controller IS
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC; --deleted := '1';
+		D_sys_clk_div : OUT std_logic;
+		D_MAIN_mem_enable : OUT std_logic;
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
@@ -52,6 +55,8 @@ ENTITY cache_controller IS
 		D_tag_table_6 : out std_logic_vector(9 downto 0);
 		D_tag_table_7 : out std_logic_vector(9 downto 0);
 		
+		D_cache : out cache_type;
+		
 		D_mem_data_out : out std_logic_vector(63 downto 0);
 		D_mem_read : out std_logic;
 		
@@ -59,17 +64,16 @@ ENTITY cache_controller IS
 		
 		D_cache_hit : out std_logic;
 		
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_Line2 : out std_logic_vector(63 downto 0);
-		D_Line3 : out std_logic_vector(63 downto 0)
+		D_dirty_bit : out std_logic_vector(7 downto 0);
+		
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
 		
 	);
 END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S_MEM1, S_MEM2);
+type state_type is ( S0,S1,S2, S_MEM1, S_mem1b, S_mem1c, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -92,17 +96,34 @@ signal cache_hit  : std_logic;
 signal write_to_word : std_logic;
 signal write_to_block : std_logic;
 
-signal cache_line0 : std_logic_vector(63 downto 0);
-signal cache_line1 : std_logic_vector(63 downto 0);
-signal cache_line2 : std_logic_vector(63 downto 0);
-signal cache_line3 : std_logic_vector(63 downto 0);
-  
+signal main_mem_address : std_logic_vector(9 downto 0);
+
+-- The location of the next write to TRAM.
+signal FIFO_Index : integer := 0;
+
+-- Dirty bits
+signal dirty_bits : std_logic_vector(7 downto 0);
+
+-- The cache that is managed in SRAM
+signal cache : cache_type;
+
+-- The TRAM tag table
+signal tag_table : tag_type;
+
+signal sys_clk_div		: std_logic;
+signal MAIN_mem_enable : std_logic;
+
+signal count : integer := 0;
+
+signal main_mem_ready : std_logic;
+
 begin
 
 process (clock, reset, address)
 begin
 	SRAM_word <= address(1 downto 0);
 	TRAM_tag <= address(11 downto 2);
+	D_cache_controller_mem_address <= main_mem_address;
 	if reset='1' then
 		TRAM_read  <= '0';
 		TRAM_write <= '0';
@@ -110,6 +131,8 @@ begin
 		state <= S0;
 		write_to_word <= '0';
 		write_to_block <= '0';
+		FIFO_Index <= 0;
+		MAIN_mem_enable <= '0';
 		
 	elsif pass_control_to_controller = '0' then
 		cache_controller_state <= x"F";
@@ -121,6 +144,7 @@ begin
 				cache_controller_state <= x"0";			
 				pass_control_to_cache <= '0';
 				
+				main_mem_address <= address(11 downto 2);
 				MAIN_read <= '0';
 				
 				-- Clear SRAM write;
@@ -132,6 +156,8 @@ begin
 				TRAM_read  <= '1';
 				TRAM_write <= '0';
 				state <= S1;
+				
+				MAIN_mem_enable <= '0';
 				
 			--delay to account for writing to memory
 			-- with instruction mov2
@@ -158,21 +184,20 @@ begin
 						write_to_word <= '1';
 						write_to_block <= '0';
 						SRAM_word  <= address(1 downto 0);
+						dirty_bits(conv_integer(TRAM_data_out)) <= '1';
 					end if;
-					
-					
+										
 					state <= S2;
 				--end HIT
 				else			
 					--cache MISS
-					cache_controller_state <= x"B";
-					MAIN_read <= '1'; -- read memory
-					MAIN_write <= '0';
+					
+					MAIN_mem_enable <= '1';
 					
 					-- To write back
 					-- (We need to add a 'dirty' bit to the indexes of the tag)
 					-- if (dirty = '1')
-					-- 	Get old tag from TRAM
+					-- 	Get old tag from FIFO_Index
 					-- 	Get old data from SRAM
 					-- 	Write SRAM data to TRAM's tag address in Main memory
 					-- 	Read new tag (address) from memory
@@ -187,11 +212,34 @@ begin
 					-- 	'cache-controller': write back to memory.
 					-- 	have a 'write_back_flag' in S0 that says when 'memory' is not writing
 					
-					-- Write to TRAM;
-					TRAM_write <= '1';
-					TRAM_read <= '0';
-					 
-					state <= S_MEM1;
+					
+					--WRITE to MAIN memory on cache miss and dirty bit set.
+					if(dirty_bits(FIFO_Index) = '1') then
+						-- This is the memory address of the data being written back from
+						-- the cache.
+						cache_controller_state <= x"4";
+						main_mem_address <= tag_table(FIFO_Index);
+						MAIN_input_data <= cache(FIFO_Index)(0) & cache(FIFO_Index)(1) & cache(FIFO_Index)(2) & cache(FIFO_Index)(3);
+						MAIN_write <= '1';
+						MAIN_read <= '0';						
+						dirty_bits(FIFO_Index) <= '0';
+						
+						state <= MAIN_WRITE_STATE;
+						
+					else 
+						cache_controller_state <= x"5";
+						--READ from MAIN memory on cache miss
+						MAIN_read <= '1'; -- read memory
+						MAIN_write <= '0';
+						-- Write to TRAM;
+						TRAM_write <= '1';
+						TRAM_read <= '0';
+						
+						dirty_bits(FIFO_Index) <= '0';
+										 
+						state <= S_MEM1;
+					end if;
+					
 				--end MISS
 				end if;
 						
@@ -206,11 +254,40 @@ begin
 				state <= S0;
 				
 			when S_MEM1 =>
+				cache_controller_state <= x"6";
 				-- Clear TRAM controls;
 				TRAM_write <= '0';
 				TRAM_read <= '0';
-				cache_controller_state <= x"C";
-				state <= S_MEM2;
+				
+				if(main_mem_ready = '0') then
+					state <= S_MEM1;
+				else
+					cache_controller_state <= x"7";
+					state <= S_mem1c;
+				end if;
+			
+			when S_mem1c =>
+				if(main_mem_ready = '0') then
+					state <= S_mem1c;
+				else
+					cache_controller_state <= x"3";
+					state <= S_mem1b;
+				end if;
+			
+			when S_mem1b =>
+				cache_controller_state <= x"8";
+				if(main_mem_ready = '0') then
+					state <= S_mem1b;
+				else 
+					cache_controller_state <= x"C";
+					-- Increment the FIFO Index after a write
+					if (FIFO_Index = 7) then 
+						FIFO_Index <= 0;
+					else 
+						FIFO_Index <= FIFO_Index + 1;		
+					end if;
+					state <= S_MEM2;
+				end if;
 				
 			when S_MEM2 =>
 				cache_controller_state <= x"D";
@@ -219,21 +296,72 @@ begin
 				SRAM_write <= '1';
 				SRAM_read <= '0';
 				write_to_word <= '0';
-				write_to_block <= '1';
-	
+				write_to_block <= '1';	
 				
+				state <= S0;	
+			
+			when MAIN_WRITE_STATE =>
+				cache_controller_state <= x"A";
+				if(main_mem_ready = '0') then
+					state <= MAIN_WRITE_STATE;
+				else
+					cache_controller_state <= x"B";
+					state <= main_write_state_b;
+				end if;
 				
-				state <= S0;				
+			when main_write_state_b =>
+				cache_controller_state <= x"C";
+				if(main_mem_ready = '0') then
+					state <= main_write_state_b;
+				else
+					cache_controller_state <= x"D";
+					MAIN_write <= '0';
+					MAIN_read <= '0';
+					state <= S0;
+				end if;
+				
 			when others =>
 		end case;
 	end if;
 
 end process;
 
+--process (clock, MAIN_mem_enable) begin
+--	if (MAIN_mem_enable = '0') then
+--		count <= 0;
+--		sys_clk_div <= '0';
+--	elsif (rising_edge(clock) and MAIN_mem_enable = '1') then
+--			count <= count + 1;
+--			if (count = 3) then 
+--				sys_clk_div <= NOT sys_clk_div;
+--				count <= 0;
+--				if (sys_clk_div = '0') then
+--					main_mem_ready <= '1';
+--				end if;
+--			end if;
+--	end if;
+--end process;
+process (clock, reset) begin
+	if (reset = '1') then
+		count <= 0;
+		sys_clk_div <= '0';
+	elsif (rising_edge(clock)) then
+		main_mem_ready <= '0';
+		count <= count + 1;
+		if (count = 3) then 
+			sys_clk_div <= NOT sys_clk_div;
+			count <= 0;
+			if (sys_clk_div = '0') then
+				main_mem_ready <= '1';
+			end if;
+		end if;
+	end if;
+end process;
+
 Unit1: memory_4KB port map(
-	address(11 downto 2),
+	main_mem_address,
 	'1',
-	clock,
+	sys_clk_div,
 	MAIN_input_data,
 	MAIN_read,
 	MAIN_write,
@@ -248,15 +376,10 @@ Unit2: TRAM port map(
 		TRAM_tag,
 		TRAM_data_out,
 		cache_hit,
+		FIFO_Index,
 		D_FIFO_Index,
-		D_tag_table_0,
-		D_tag_table_1,
-		D_tag_table_2,
-		D_tag_table_3,
-		D_tag_table_4,
-		D_tag_table_5,
-		D_tag_table_6,
-		D_tag_table_7);
+		tag_table
+		);
 	
 Unit3: SRAM port map(	
 		clock,
@@ -270,10 +393,8 @@ Unit3: SRAM port map(
 		MAIN_output_data,
 		write_to_word,
 		write_to_block,
-		cache_line0,
-		cache_line1,
-		cache_line2,
-		cache_line3);
+		cache
+		);
 		
 		D_TRAM_data_out <= TRAM_data_out;
 		D_SRAM_output_data <= SRAM_output_data;
@@ -282,11 +403,20 @@ Unit3: SRAM port map(
 		D_cache_hit <= cache_hit;
 		D_mem_data_out <= MAIN_output_data;
 		D_mem_read <= MAIN_read;
+	
 		
-		D_Line0 <= cache_line0;
-		D_Line1 <= cache_line1;
-		D_Line2 <= cache_line2;
-		D_Line3 <= cache_line3;
+		D_cache <= cache;
+			D_tag_table_0 <= tag_table(0);
+	D_tag_table_1 <= tag_table(1);
+	D_tag_table_2 <= tag_table(2);
+	D_tag_table_3 <= tag_table(3);
+	D_tag_table_4 <= tag_table(4);
+	D_tag_table_5 <= tag_table(5);
+	D_tag_table_6 <= tag_table(6);
+	D_tag_table_7 <= tag_table(7);
+	
+	D_MAIN_mem_enable <= MAIN_MEm_enable;
+	D_sys_clk_div <= sys_clk_div;
 end fsm;
  
  

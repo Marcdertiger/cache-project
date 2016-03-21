@@ -35,7 +35,8 @@ port(	clock:		in std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state : out std_logic_vector(7 downto 0);
-	pass_control_to_cache: 	out std_logic
+	mem_ready_controller: 	out std_logic;
+	jmpen_ctrl2 : out std_logic
 );
 end controller;
 
@@ -79,6 +80,7 @@ begin
 			Ms_ctrl <= "10";
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
+			jmpen_ctrl2 <= '0';
 			oe_ctrl <= '0';
 			next_state <= S1a;
 			
@@ -107,6 +109,8 @@ begin
 			    when jz =>		state <= S9;
 			    when halt =>	state <= S10; 
 			    when readm => 	state <= S11;
+				 when mov5 =>	state <= S12;
+				 when jz2 =>   state <= S13;
 			    when others => 	state <= S1;
 			    end case;
 					
@@ -258,27 +262,30 @@ begin
 			oe_ctrl <= '1'; 
 			state <= S1;
 			
-		-- S12 and S13 may need optimizing. version form 3/13/2016
-		-- tested in reference system. 
-			
-				when S12 =>	
+		-- this should do : R2 <= mem[RF[r1]] (inverse of MOV3)
+		-- copied mov3 code as a starting point
+		-- does not work( 10/03/2016 4:45pm ) 
+		-- updated and tested : new works (13/03/2016)
+		
+		when S12 =>	
 			current_state <= x"0C";
 			RFr1a_ctrl <= IR_word(11 downto 8);	
 			Ms_ctrl <= "00";
 			Mre_ctrl <= '1';
 			RFwe_ctrl <= '0';
 			RFr1e_ctrl <= '1';
-			RFr2e_ctrl <= '0';		
+			RFr2e_ctrl <= '0';
 			RFs_ctrl <= "01";		
 			Mwe_ctrl <= '0';
 			next_state <= S12a;
 			
 			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
+			--state<=S12a;
 			
 	  when S12a =>   		
 	  current_state <= x"AC";
-			
+			Mre_ctrl <= '0';
 			RFs_ctrl <= "01";	
 			RFwa_ctrl <= IR_word(7 downto 4);
 			RFwe_ctrl <= '1';
@@ -289,31 +296,24 @@ begin
 			current_state <= x"BC";
 			Ms_ctrl <= "10";-- return
 			Mwe_ctrl <= '0';
-			state <= S1;
-			
-			
-		-- this should jump only if register RF[r1] = 25 decimal (19 hex)
-		-- tested and working in reference system with parts of matrix addition code
-		-- Jumping when the target register is zero is avoided by using num_B channel
-		-- instead of num_A, that way we only check for the single =25 condition. see ALU 
-		-- unit for logic implemented there.
-		-- tested in reference system
-		
-		
-	when S13 =>	 
+			state <= S1;      
+      
+	when S13 =>	
 			current_state <= x"0D";
-			jmpen_ctrl <= '1';
-			RFr2a_ctrl <= IR_word(11 downto 8);	
-			RFr2e_ctrl <= '1'; -- jz if R[rn] = 0
-			ALUs_ctrl <= "01";
+			jmpen_ctrl2 <= '1';
+			jmpen_ctrl <= '0';
+			RFr1a_ctrl <= IR_word(11 downto 8);	
+			RFr1e_ctrl <= '1'; -- jz  R[rn] 
+			ALUs_ctrl <= "00";
 			state <= S13a;
 	  when S13a =>   
-			current_state <= x"AD";
+			current_state <= x"1D";
 			state <= S13b;
 	  when S13b =>   
-			current_state <= x"BD";
+			current_state <= x"2D";
+			jmpen_ctrl2 <= '0';
 			jmpen_ctrl <= '0';
-	      state <= S1;
+	      state <= S1;      
 		
 			
 		-- A 

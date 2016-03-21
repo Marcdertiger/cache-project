@@ -34,14 +34,15 @@ port(	clock:		in std_logic;
 	Mre_ctrl:	out std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
-	current_state : out std_logic_vector(7 downto 0)
+	current_state : out std_logic_vector(7 downto 0);
+	jmpen_ctrl2:	out std_logic
 );
 end controller;
 
 architecture fsm of controller is
 
   type state_type is (  S0,S1,S1a,S1wait,S1b,S2,S3,S3a,S3b,S3wait,S4,S4a,S4b,S5,S5a,S5b,
-			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE,S12,S12a,S12b);
+			S6,S6a,S7,S7a,S7b,S8,S8a,S8b,S9,S9a,S9b,S10,S11,S11a,S11wait,WAIT_STATE,S12,S12a,S12b,S13,S13a,S13b);
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
@@ -58,7 +59,8 @@ begin
 	Rfwe_ctrl <= '0';
 	Mre_ctrl <= '0';
 	Mwe_ctrl <= '0';					
-	jmpen_ctrl <= '0';		
+	jmpen_ctrl <= '0';
+	jmpen_ctrl2 <= '0';	
 	oe_ctrl <= '0';
 	state <= S0;
 
@@ -78,6 +80,7 @@ begin
 			Ms_ctrl <= "10";
 			Mwe_ctrl <= '0';
 			jmpen_ctrl <= '0';
+			jmpen_ctrl2 <= '0';
 			oe_ctrl <= '0';
 			next_state <= S1wait;
 			state <= WAIT_STATE;
@@ -106,9 +109,10 @@ begin
 			    when subt =>	state <= S8;
 			    when jz =>		state <= S9;
 			    when halt =>	state <= S10; 
-			    when readm => 	state <= S11;
-                when mov5 =>	state <= S12;
-			    when others => 	state <= S1;
+			    when readm => state <= S11;
+             when mov5 =>	state <= S12;
+				 when jz2 =>   state <= S13;
+			    when others =>state <= S1;
 			    end case;
 					
 	  when S3 =>	
@@ -272,9 +276,9 @@ begin
 			RFr2e_ctrl <= '0';		
 			RFs_ctrl <= "01";		
 			Mwe_ctrl <= '0';
-			--next_state <= S12a;
-			--state <= WAIT_STATE;
-			state<=S12a;
+			next_state <= S12a;
+			state <= WAIT_STATE;
+			--state<=S12a;
 			
 	  when S12a =>   		
 	  current_state <= x"AC";
@@ -290,7 +294,23 @@ begin
 			Ms_ctrl <= "10";-- return
 			Mwe_ctrl <= '0';
 			state <= S1;      
-            
+      
+	when S13 =>	
+			current_state <= x"0D";
+			jmpen_ctrl2 <= '1';
+			jmpen_ctrl <= '0';
+			RFr1a_ctrl <= IR_word(11 downto 8);	
+			RFr1e_ctrl <= '1'; -- jz  R[rn] 
+			ALUs_ctrl <= "00";
+			state <= S13a;
+	  when S13a =>   
+			current_state <= x"1D";
+			state <= S13b;
+	  when S13b =>   
+			current_state <= x"2D";
+			jmpen_ctrl2 <= '0';
+			jmpen_ctrl <= '0';
+	      state <= S1;      
               
 		-- A 
 		when WAIT_STATE =>	

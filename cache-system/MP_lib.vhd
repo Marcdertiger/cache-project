@@ -10,6 +10,11 @@ type ram_type is array (0 to 255) of
 				
 type rf_type is array (0 to 15) of 
         std_logic_vector(15 downto 0);
+		  
+type tag_type is array (7 downto 0) of std_logic_vector(9 downto 0);
+
+type cache_line is array (3 downto 0) of std_logic_vector(15 downto 0);
+type cache_type is array (7 downto 0) of cache_line;
 
 constant ZERO : std_logic_vector(15 downto 0) := "0000000000000000";
 constant HIRES : std_logic_vector(15 downto 0) := "ZZZZZZZZZZZZZZZZ";
@@ -22,6 +27,9 @@ constant subt : std_logic_vector(3 downto 0) := "0101";
 constant jz  : std_logic_vector(3 downto 0) := "0110";
 constant halt  : std_logic_vector(3 downto 0) := "1111";
 constant readm  : std_logic_vector(3 downto 0) := "0111";
+constant jz2	:  std_logic_vector(3 downto 0) := "1001";
+constant mov5 : std_logic_vector(3 downto 0) := "1000"; --new op code to move mem[Reg1]-> Reg2
+
 
 component CPU is
 port (	
@@ -55,7 +63,8 @@ port (
 		jpsign:	in std_logic;
 		ALUs:	in std_logic_vector(1 downto 0);
 		ALUz:	out std_logic;
-		ALUout:	out std_logic_vector(15 downto 0)
+		ALUout:	out std_logic_vector(15 downto 0);
+		jpsign2: in std_logic
 );
 end component;
 
@@ -93,7 +102,8 @@ port(
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state: out std_logic_vector(7 downto 0);
-	pass_control_to_cache: 	out std_logic
+	mem_ready_controller: 	out std_logic;
+	jmpen_ctrl2:	out std_logic
 );
 end component;
 
@@ -126,19 +136,30 @@ component cache_controller is
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
 		clock		: IN STD_LOGIC;
+		D_sys_clk_div : OUT std_logic;
+		D_main_mem_enable : out std_LOGIC;
 		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		rden		: IN STD_LOGIC  := '1';
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-		pass_control_to_controller	 : OUT std_logic;
+		D_FIFO_Index : out std_logic_vector(2 downto 0);
+		mem_ready	 : OUT std_logic;
 		D_cache_hit : OUT std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
 		D_tag_table_0 : out std_logic_vector(9 downto 0);
 		D_tag_table_1 : out std_logic_vector(9 downto 0);
 		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_cache_controller_state : out std_logic_vector(3 downto 0)
+		D_tag_table_3 : out std_logic_vector(9 downto 0);
+		D_tag_table_4 : out std_logic_vector(9 downto 0);
+		D_tag_table_5 : out std_logic_vector(9 downto 0);
+		D_tag_table_6 : out std_logic_vector(9 downto 0);
+		D_tag_table_7 : out std_logic_vector(9 downto 0);
+		
+		D_cache : out cache_type;
+		
+		D_cache_controller_state : out std_logic_vector(3 downto 0);
+		D_dirty_bit : out std_logic_vector(7 downto 0);
+		D_cache_controller_mem_address : out std_logic_vector(9 downto 0)
 	);
 end component;
 component TRAM is
@@ -151,17 +172,11 @@ port (
 		data_out :	out std_logic_vector(2 downto 0);
 		
 		cache_hit : out std_logic;
+		FIFO_Index: in integer;
 		
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
 		
-		D_tag_table_0 : out std_logic_vector(9 downto 0);
-		D_tag_table_1 : out std_logic_vector(9 downto 0);
-		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_tag_table_3 : out std_logic_vector(9 downto 0);
-		D_tag_table_4 : out std_logic_vector(9 downto 0);
-		D_tag_table_5 : out std_logic_vector(9 downto 0);
-		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0)
+		tag_table : buffer tag_type
 );
 end component;
 
@@ -178,11 +193,7 @@ port (
 		mem_data_in : in std_logic_vector(63 downto 0);
 		write_to_word : in std_logic;
 		write_to_block : in std_logic;
-
-		D_Line0 : out std_logic_vector(63 downto 0);
-		D_Line1 : out std_logic_vector(63 downto 0);
-		D_Line2 : out std_logic_vector(63 downto 0);
-		D_Line3 : out std_logic_vector(63 downto 0)
+		cache		: buffer cache_type
 );
 end component;
 
@@ -256,7 +267,8 @@ port(
 	oe_cu:		out 	std_logic;
 	current_state: out std_logic_vector(7 downto 0);
 	IR_word					: out std_logic_vector(15 downto 0);
-	mem_ready_controller: 	out std_logic
+	mem_ready_controller: 	out std_logic;
+	jpen_cu2:	out 	std_logic
 );
 end component;
 
@@ -278,7 +290,8 @@ port(
 	ALUz_dp:	out 	std_logic;
 	RF1out_dp:	out 	std_logic_vector(15 downto 0);
 	ALUout_dp:	out 	std_logic_vector(15 downto 0);
-	tmp_rf : out rf_type	
+	tmp_rf : out rf_type;
+	jp_en2:		in 	std_logic
 );
 end component;
 

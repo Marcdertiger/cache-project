@@ -52,7 +52,8 @@ port( sys_clk							:	in std_logic;
 		D_rf_14						: out std_logic_vector(15 downto 0);
 		D_rf_15						: out std_logic_vector(15 downto 0);
 		
-		D_mem_ready					: out std_logic
+		D_mem_ready					: out std_logic;
+		D_ExecTime					: out integer
 
 		-- end debug variables	
 );
@@ -75,6 +76,7 @@ architecture rtl of SimpleCompArch is
 	
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
+	signal ExecTime : integer:=0;
 	
 	begin
 	mem_address_cheat <= x"0" & mem_addr;
@@ -95,7 +97,21 @@ architecture rtl of SimpleCompArch is
 			end if;
 		end if;
 	end process;
+	
+	
+	process (sys_clk, ExecTime, IR_word)
+	variable OPCODE: std_logic_vector(3 downto 0);
+	begin		
+		if(rising_edge(sys_clk)) then
+			case (IR_word(15 downto 12)) is
+				 when halt =>  Exectime <= ExecTime;
+			    when others =>Exectime <= ExecTime + 1;
+			end case;
+		end if;
+		  
+	end process;	 
 
+	
 Unit1: CPU port map (
 	sys_clk,
 	mem_ready,
@@ -154,5 +170,6 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_rf_15 <= rf_tmp(15);
 	
 	D_mem_ready <= mem_ready;
+	D_ExecTime <= ExecTime;
 		
 end rtl;

@@ -7,20 +7,28 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate /simplecomparch/sys_clk
 add wave -noupdate /simplecomparch/sys_rst
+
+add wave -noupdate /simplecomparch/D_ExecTime
+
 add wave -noupdate /simplecomparch/mem_clk_en
 add wave -noupdate /simplecomparch/sys_output
-add wave -noupdate /simplecomparch/sys_clk_div
+add wave -noupdate /simplecomparch/D_sys_clk_div
 add wave -noupdate /simplecomparch/D_rfout_bus
-add wave -noupdate /simplecomparch/D_RFwa
-add wave -noupdate /simplecomparch/D_RFr1a
-add wave -noupdate /simplecomparch/D_RFr2a
-add wave -noupdate /simplecomparch/D_RFwe
-add wave -noupdate /simplecomparch/D_RFr1e
-add wave -noupdate /simplecomparch/D_RFr2e
-add wave -noupdate /simplecomparch/D_RFs
-add wave -noupdate /simplecomparch/D_ALUs
-add wave -noupdate /simplecomparch/D_PCld
-add wave -noupdate /simplecomparch/D_jpz
+
+add wave -noupdate /simplecomparch/D_dirty_bits
+add wave -noupdate /simplecomparch/D_main_mem_enable
+add wave -noupdate /simplecomparch/D_fifo_index
+
+#add wave -noupdate /simplecomparch/D_RFwa
+#add wave -noupdate /simplecomparch/D_RFr1a
+#add wave -noupdate /simplecomparch/D_RFr2a
+#add wave -noupdate /simplecomparch/D_RFwe
+#add wave -noupdate /simplecomparch/D_RFr1e
+#add wave -noupdate /simplecomparch/D_RFr2e
+#add wave -noupdate /simplecomparch/D_RFs
+#add wave -noupdate /simplecomparch/D_ALUs
+#add wave -noupdate /simplecomparch/D_PCld
+#add wave -noupdate /simplecomparch/D_jpz
 add wave -noupdate /simplecomparch/D_oe
 add wave -noupdate /simplecomparch/D_mdout_bus
 add wave -noupdate /simplecomparch/D_mdin_bus
@@ -38,9 +46,24 @@ add wave -noupdate /simplecomparch/D_rf_0
 add wave -noupdate /simplecomparch/D_tag_table_0
 add wave -noupdate /simplecomparch/D_tag_table_1
 add wave -noupdate /simplecomparch/D_tag_table_2
+add wave -noupdate /simplecomparch/D_tag_table_3
+add wave -noupdate /simplecomparch/D_tag_table_4
+add wave -noupdate /simplecomparch/D_tag_table_5
+add wave -noupdate /simplecomparch/D_tag_table_6
+add wave -noupdate /simplecomparch/D_tag_table_7
+
 add wave -noupdate /simplecomparch/D_TRAM_tag
-add wave -noupdate /simplecomparch/D_line0
-add wave -noupdate /simplecomparch/D_line1
+
+add wave -noupdate /simplecomparch/D_cache0
+add wave -noupdate /simplecomparch/D_cache1
+add wave -noupdate /simplecomparch/D_cache2
+add wave -noupdate /simplecomparch/D_cache3
+add wave -noupdate /simplecomparch/D_cache4
+add wave -noupdate /simplecomparch/D_cache5
+add wave -noupdate /simplecomparch/D_cache6
+add wave -noupdate /simplecomparch/D_cache7
+
+add wave D_cache_controller_mem_address
 
 
 TreeUpdate [SetDefaultTree]
@@ -64,4 +87,4 @@ WaveRestoreZoom {0 ps} {6468 ps}
 
 radix -hexadecimal
 
-run 5ns
+run 500000ps
