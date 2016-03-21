@@ -15,7 +15,7 @@ use work.MP_lib.all;
 
 entity controller is
 port(	clock:		in std_logic;
-	mem_ready	:in std_logic;
+	pass_control_to_controller	:in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -35,7 +35,7 @@ port(	clock:		in std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state : out std_logic_vector(7 downto 0);
-	mem_ready_controller: 	out std_logic
+	pass_control_to_cache: 	out std_logic
 );
 end controller;
 
@@ -82,7 +82,7 @@ begin
 			oe_ctrl <= '0';
 			next_state <= S1a;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 		when S1a => 
 			current_state <= x"A1";
@@ -119,7 +119,7 @@ begin
 			Mwe_ctrl <= '0';		  
 			next_state <= S3a;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 	  when S3a =>   
 			current_state <= x"A3";
@@ -145,7 +145,7 @@ begin
 			Mwe_ctrl <= '1';
 			next_state <= S4b;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 	  when S4b =>   
 			current_state <= x"B4";
@@ -168,7 +168,7 @@ begin
 			Mwe_ctrl <= '1'; -- write into memory
 			next_state <= S5b;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 	  when S5b => 	
 			current_state <= x"B5";
@@ -251,7 +251,7 @@ begin
 			Mwe_ctrl <= '0';
 			next_state <= S11a;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 	  when S11a =>  
 			current_state <= x"AB";
@@ -273,7 +273,7 @@ begin
 			Mwe_ctrl <= '0';
 			next_state <= S12a;
 			
-			mem_ready_controller <= '1';
+			pass_control_to_cache <= '1';
 			state <= WAIT_STATE;
 			
 	  when S12a =>   		
@@ -324,10 +324,10 @@ begin
 		when WAIT_STATE =>	
 			current_state <= x"FF";
 			
-			if (mem_ready = '1') then
+			if (pass_control_to_controller = '1') then
 				current_state <= x"EE";
 				state <= next_state;
-				mem_ready_controller <= '0';
+				pass_control_to_cache <= '0';
 				--A1
 				--current_state <= x"A1";
 			end if;
