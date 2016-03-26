@@ -35,7 +35,7 @@ port(	clock:		in std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state : out std_logic_vector(7 downto 0);
-	mem_ready_controller: 	out std_logic;
+	pass_control_to_cache: 	out std_logic;
 	jmpen_ctrl2 : out std_logic
 );
 end controller;
