@@ -15,7 +15,6 @@ use work.MP_lib.all;
 entity SimpleCompArch is
 port( sys_clk							:	in std_logic;
 		sys_rst							:	in std_logic;
-		mem_clk_en						: 	in std_logic;
 		sys_output						:	out std_logic_vector(15 downto 0);
 		sys_clk_div						: 	buffer std_logic;
 		
@@ -35,22 +34,22 @@ port( sys_clk							:	in std_logic;
 		D_current_state							: out std_logic_vector(7 downto 0);
 		D_IR_word									: out std_logic_vector(15 downto 0);
 		
-		D_rf_0							: out std_logic_vector(15 downto 0);
-		D_rf_1							: out std_logic_vector(15 downto 0);
-		D_rf_2							: out std_logic_vector(15 downto 0);
-		D_rf_3							: out std_logic_vector(15 downto 0);
-		D_rf_4							: out std_logic_vector(15 downto 0);
-		D_rf_5							: out std_logic_vector(15 downto 0);
-		D_rf_6							: out std_logic_vector(15 downto 0);
-		D_rf_7							: out std_logic_vector(15 downto 0);
-		D_rf_8							: out std_logic_vector(15 downto 0);
-		D_rf_9							: out std_logic_vector(15 downto 0);
-		D_rf_10						: out std_logic_vector(15 downto 0);
-		D_rf_11						: out std_logic_vector(15 downto 0);
-		D_rf_12						: out std_logic_vector(15 downto 0);
-		D_rf_13						: out std_logic_vector(15 downto 0);
-		D_rf_14						: out std_logic_vector(15 downto 0);
-		D_rf_15						: out std_logic_vector(15 downto 0);
+--		D_rf_0							: out std_logic_vector(15 downto 0);
+--		D_rf_1							: out std_logic_vector(15 downto 0);
+--		D_rf_2							: out std_logic_vector(15 downto 0);
+--		D_rf_3							: out std_logic_vector(15 downto 0);
+--		D_rf_4							: out std_logic_vector(15 downto 0);
+--		D_rf_5							: out std_logic_vector(15 downto 0);
+--		D_rf_6							: out std_logic_vector(15 downto 0);
+--		D_rf_7							: out std_logic_vector(15 downto 0);
+--		D_rf_8							: out std_logic_vector(15 downto 0);
+--		D_rf_9							: out std_logic_vector(15 downto 0);
+--		D_rf_10						: out std_logic_vector(15 downto 0);
+--		D_rf_11						: out std_logic_vector(15 downto 0);
+--		D_rf_12						: out std_logic_vector(15 downto 0);
+--		D_rf_13						: out std_logic_vector(15 downto 0);
+--		D_rf_14						: out std_logic_vector(15 downto 0);
+--		D_rf_15						: out std_logic_vector(15 downto 0);
 		
 		D_mem_ready					: out std_logic;
 		D_ExecTime					: out integer
@@ -130,7 +129,7 @@ Unit1: CPU port map (
 																					
 Unit2: memory_4KB port map(
 	mem_address_cheat,
-	mem_clk_en,
+	'1',
 	sys_clk_div,
 	mdin_bus,
 	Mre,
@@ -152,22 +151,22 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 -- end debug variables
 
 -- Register file debugging
-	D_rf_0 <= rf_tmp(0);	
-	D_rf_1 <= rf_tmp(1);	
-	D_rf_2 <= rf_tmp(2);	
-	D_rf_3 <= rf_tmp(3);	
-	D_rf_4 <= rf_tmp(4);	
-	D_rf_5 <= rf_tmp(5);	
-	D_rf_6 <= rf_tmp(6);	
-	D_rf_7 <= rf_tmp(7);
-	D_rf_8 <= rf_tmp(8);	
-	D_rf_9 <= rf_tmp(9);	
-	D_rf_10 <= rf_tmp(10);	
-	D_rf_11 <= rf_tmp(11);	
-	D_rf_12 <= rf_tmp(12);
-	D_rf_13 <= rf_tmp(13);	
-	D_rf_14 <= rf_tmp(14);	
-	D_rf_15 <= rf_tmp(15);
+--	D_rf_0 <= rf_tmp(0);	
+--	D_rf_1 <= rf_tmp(1);	
+--	D_rf_2 <= rf_tmp(2);	
+--	D_rf_3 <= rf_tmp(3);	
+--	D_rf_4 <= rf_tmp(4);	
+--	D_rf_5 <= rf_tmp(5);	
+--	D_rf_6 <= rf_tmp(6);	
+--	D_rf_7 <= rf_tmp(7);
+--	D_rf_8 <= rf_tmp(8);	
+--	D_rf_9 <= rf_tmp(9);	
+--	D_rf_10 <= rf_tmp(10);	
+--	D_rf_11 <= rf_tmp(11);	
+--	D_rf_12 <= rf_tmp(12);
+--	D_rf_13 <= rf_tmp(13);	
+--	D_rf_14 <= rf_tmp(14);	
+--	D_rf_15 <= rf_tmp(15);
 	
 	D_mem_ready <= mem_ready;
 	D_ExecTime <= ExecTime;
