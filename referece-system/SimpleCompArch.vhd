@@ -17,6 +17,7 @@ port( sys_clk							:	in std_logic;
 		sys_rst							:	in std_logic;
 		sys_output						:	out std_logic_vector(15 downto 0);
 		sys_clk_div						: 	buffer std_logic;
+		output_button					: 	in std_logic;
 		
 		-- Debug signals from CPU: output for simulation purpose only	
 		D_rfout_bus									: out std_logic_vector(15 downto 0);  
@@ -107,6 +108,7 @@ architecture rtl of SimpleCompArch is
 		elsif(rising_edge(sys_clk)) then
 			case (IR_word(15 downto 12)) is
 				 when halt =>  Exectime <= ExecTime;
+				 when readm => ExecTime <= ExecTime;
 			    when others =>Exectime <= ExecTime + 1;
 			end case;
 		end if;
@@ -127,6 +129,7 @@ Unit1: CPU port map (
 	current_state,
 	IR_word,
 	rf_tmp,
+	output_button,
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
 																					

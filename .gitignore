@@ -33,7 +33,7 @@
 *.sof
 *.pof
 *.qws
-*.qsf
+#*.qsf
 *.smsg
 *_inst.vhd
 *_generation_script*

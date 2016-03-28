@@ -40,6 +40,7 @@ port (
 		current_state: out std_logic_vector(7 downto 0);
 		IR_word					: out std_logic_vector(15 downto 0);
 		tmp_rf 					: out rf_type;
+		output_button					: 	in std_logic;
 		-- Debug variables: output to upper level for simulation purpose only
 		D_rfout_bus: out std_logic_vector(15 downto 0);  
 		D_RFwa_s, D_RFr1a_s, D_RFr2a_s: out std_logic_vector(3 downto 0);
@@ -96,7 +97,8 @@ port(
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state: out std_logic_vector(7 downto 0);
-	jmpen_ctrl2:	out std_logic
+	jmpen_ctrl2:	out std_logic;
+	output_button					: 	in std_logic
 );
 end component;
 
@@ -205,7 +207,8 @@ port(
 	oe_cu:		out 	std_logic;
 	current_state: out std_logic_vector(7 downto 0);
 	IR_word					: out std_logic_vector(15 downto 0);
-	jpen_cu2:	out 	std_logic
+	jpen_cu2:	out 	std_logic;
+	output_button					: 	in std_logic
 );
 end component;
 
