@@ -348,9 +348,5 @@ begin
 			old_output_button <= output_button;
 		end if;
 	end process;
-  
---  process (clock, output_button, falling_output_button) begin
---		if (falling_edge(output_button))
---			falling_output_button <= '1';
 		
 end fsm;
