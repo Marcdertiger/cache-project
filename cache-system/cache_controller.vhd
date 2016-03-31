@@ -73,7 +73,7 @@ END cache_controller;
 
 architecture fsm of cache_controller is
 
-type state_type is ( S0,S1,S2, S_MEM1, S_mem1b, S_mem1c, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
+type state_type is ( S0,S0b,S1,S2, S_MEM1, S_mem1b, S_mem1c, S_MEM2, MAIN_WRITE_STATE, main_write_state_b);
   signal state: state_type;
 signal TRAM_read : std_logic;
 signal TRAM_write : std_logic;
@@ -155,12 +155,15 @@ begin
 				--read from tag_table in TRAM
 				TRAM_read  <= '1';
 				TRAM_write <= '0';
-				state <= S1;
+				state <= S0b;
 				
 				MAIN_mem_enable <= '0';
 				
 			--delay to account for writing to memory
 			-- with instruction mov2
+			when S0b =>
+				main_mem_address <= address(11 downto 2);
+				state <= S1;
 				
 			when S1 =>
 				

@@ -284,7 +284,7 @@ begin
 			--state<=S12a;
 			
 	  when S12a =>   		
-	  current_state <= x"AC";
+			current_state <= x"AC";
 			Mre_ctrl <= '0';
 			RFs_ctrl <= "01";	
 			RFwa_ctrl <= IR_word(7 downto 4);

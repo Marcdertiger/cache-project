@@ -46,11 +46,11 @@ port( sys_clk							:	in std_logic;
 		D_rf_1						: out std_logic_vector(15 downto 0);
 		D_rf_2						: out std_logic_vector(15 downto 0);
 		D_rf_3						: out std_logic_vector(15 downto 0);
-		D_rf_4						: out std_logic_vector(15 downto 0);
-		D_rf_5						: out std_logic_vector(15 downto 0);
-		D_rf_6						: out std_logic_vector(15 downto 0);
-		D_rf_7						: out std_logic_vector(15 downto 0);
-		D_rf_8						: out std_logic_vector(15 downto 0);
+--		D_rf_4						: out std_logic_vector(15 downto 0);
+--		D_rf_5						: out std_logic_vector(15 downto 0);
+--		D_rf_6						: out std_logic_vector(15 downto 0);
+--		D_rf_7						: out std_logic_vector(15 downto 0);
+--		D_rf_8						: out std_logic_vector(15 downto 0);
 --		D_rf_9						: out std_logic_vector(15 downto 0);
 --		D_rf_10						: out std_logic_vector(15 downto 0);
 --		D_rf_11						: out std_logic_vector(15 downto 0);
@@ -59,23 +59,23 @@ port( sys_clk							:	in std_logic;
 --		D_rf_14						: out std_logic_vector(15 downto 0);
 --		D_rf_15						: out std_logic_vector(15 downto 0);
 		
-		D_tag_table_0 : out std_logic_vector(9 downto 0);
-		D_tag_table_1 : out std_logic_vector(9 downto 0);
-		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_tag_table_3 : out std_logic_vector(9 downto 0);
-		D_tag_table_4 : out std_logic_vector(9 downto 0);
-		D_tag_table_5 : out std_logic_vector(9 downto 0);
-		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0);
-		
+--		D_tag_table_0 : out std_logic_vector(9 downto 0);
+--		D_tag_table_1 : out std_logic_vector(9 downto 0);
+--		D_tag_table_2 : out std_logic_vector(9 downto 0);
+--		D_tag_table_3 : out std_logic_vector(9 downto 0);
+--		D_tag_table_4 : out std_logic_vector(9 downto 0);
+--		D_tag_table_5 : out std_logic_vector(9 downto 0);
+--		D_tag_table_6 : out std_logic_vector(9 downto 0);
+--		D_tag_table_7 : out std_logic_vector(9 downto 0);
+--		
 		D_cache0 : out std_logic_vector(63 downto 0);
---		D_cache1 : out std_logic_vector(63 downto 0);
---		D_cache2 : out std_logic_vector(63 downto 0);
---		D_cache3 : out std_logic_vector(63 downto 0);
---		D_cache4 : out std_logic_vector(63 downto 0);
---		D_cache5 : out std_logic_vector(63 downto 0);
---		D_cache6 : out std_logic_vector(63 downto 0);
---		D_cache7 : out std_logic_vector(63 downto 0);
+		D_cache1 : out std_logic_vector(63 downto 0);
+		D_cache2 : out std_logic_vector(63 downto 0);
+		D_cache3 : out std_logic_vector(63 downto 0);
+		D_cache4 : out std_logic_vector(63 downto 0);
+		D_cache5 : out std_logic_vector(63 downto 0);
+		D_cache6 : out std_logic_vector(63 downto 0);
+		D_cache7 : out std_logic_vector(63 downto 0);
 
 		D_cache_controller_state : out std_logic_vector(3 downto 0);
 		
@@ -160,14 +160,14 @@ Unit2: cache_controller port map(
 	mem_ready,
 	cache_hit,
 	D_TRAM_tag,
-	D_tag_table_0,
-	D_tag_table_1,
-	D_tag_table_2,
-	D_tag_table_3,
-	D_tag_table_4,
-	D_tag_table_5,
-	D_tag_table_6,
-	D_tag_table_7,
+--	D_tag_table_0,
+--	D_tag_table_1,
+--	D_tag_table_2,
+--	D_tag_table_3,
+--	D_tag_table_4,
+--	D_tag_table_5,
+--	D_tag_table_6,
+--	D_tag_table_7,
 	cache,
 	D_cache_controller_state,
 	D_dirty_bits,
@@ -189,13 +189,13 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_cache_hit <= cache_hit;
 	
 	D_cache0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
---	D_cache1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
---	D_cache2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
---	D_cache3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
---	D_cache4 <= cache(4)(0) & cache(4)(1) & cache(4)(2) & cache(4)(3);
---	D_cache5 <= cache(5)(0) & cache(5)(1) & cache(5)(2) & cache(5)(3);
---	D_cache6 <= cache(6)(0) & cache(6)(1) & cache(6)(2) & cache(6)(3);
---	D_cache7 <= cache(7)(0) & cache(7)(1) & cache(7)(2) & cache(7)(3);
+	D_cache1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);
+	D_cache2 <= cache(2)(0) & cache(2)(1) & cache(2)(2) & cache(2)(3);
+	D_cache3 <= cache(3)(0) & cache(3)(1) & cache(3)(2) & cache(3)(3);
+	D_cache4 <= cache(4)(0) & cache(4)(1) & cache(4)(2) & cache(4)(3);
+	D_cache5 <= cache(5)(0) & cache(5)(1) & cache(5)(2) & cache(5)(3);
+	D_cache6 <= cache(6)(0) & cache(6)(1) & cache(6)(2) & cache(6)(3);
+	D_cache7 <= cache(7)(0) & cache(7)(1) & cache(7)(2) & cache(7)(3);
 	
 	D_cache_controller_mem_address <= cache_controller_mem_address;
 	
@@ -206,11 +206,11 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_rf_1 <= rf_tmp(1);	
 	D_rf_2 <= rf_tmp(2);	
 	D_rf_3 <= rf_tmp(3);	
-	D_rf_4 <= rf_tmp(4);	
-	D_rf_5 <= rf_tmp(5);	
-	D_rf_6 <= rf_tmp(6);	
-	D_rf_7 <= rf_tmp(7);
-	D_rf_8 <= rf_tmp(8);	
+--	D_rf_4 <= rf_tmp(4);	
+--	D_rf_5 <= rf_tmp(5);	
+--	D_rf_6 <= rf_tmp(6);	
+--	D_rf_7 <= rf_tmp(7);
+--	D_rf_8 <= rf_tmp(8);	
 ----	D_rf_9 <= rf_tmp(9);	
 --	D_rf_10 <= rf_tmp(10);	
 --	D_rf_11 <= rf_tmp(11);	

@@ -146,14 +146,14 @@ component cache_controller is
 		mem_ready	 : OUT std_logic;
 		D_cache_hit : OUT std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
-		D_tag_table_0 : out std_logic_vector(9 downto 0);
-		D_tag_table_1 : out std_logic_vector(9 downto 0);
-		D_tag_table_2 : out std_logic_vector(9 downto 0);
-		D_tag_table_3 : out std_logic_vector(9 downto 0);
-		D_tag_table_4 : out std_logic_vector(9 downto 0);
-		D_tag_table_5 : out std_logic_vector(9 downto 0);
-		D_tag_table_6 : out std_logic_vector(9 downto 0);
-		D_tag_table_7 : out std_logic_vector(9 downto 0);
+--		D_tag_table_0 : out std_logic_vector(9 downto 0);
+--		D_tag_table_1 : out std_logic_vector(9 downto 0);
+--		D_tag_table_2 : out std_logic_vector(9 downto 0);
+--		D_tag_table_3 : out std_logic_vector(9 downto 0);
+--		D_tag_table_4 : out std_logic_vector(9 downto 0);
+--		D_tag_table_5 : out std_logic_vector(9 downto 0);
+--		D_tag_table_6 : out std_logic_vector(9 downto 0);
+--		D_tag_table_7 : out std_logic_vector(9 downto 0);
 		
 		D_cache : out cache_type;
 		

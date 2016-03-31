@@ -65,7 +65,7 @@ BEGIN
 	GENERIC MAP (
 		clock_enable_input_a => "NORMAL",
 		clock_enable_output_a => "NORMAL",
-		init_file => "Matrix_addition.mif",
+		init_file => "Matrix_addition_BOARD.mif",
 		intended_device_family => "Cyclone IV E",
 		lpm_hint => "ENABLE_RUNTIME_MOD=NO",
 		lpm_type => "altsyncram",
