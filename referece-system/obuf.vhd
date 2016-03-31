@@ -24,9 +24,9 @@ begin
   process (O_en, obuf_in)
   begin
     if O_en = '1' then
-	obuf_out <= obuf_in;
+		obuf_out <= obuf_in;
     else
-	obuf_out <= HIRES;
+		obuf_out <= HIRES;
     end if;
   end process;
 

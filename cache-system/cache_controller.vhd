@@ -27,7 +27,7 @@ use work.MP_lib.all;
 ENTITY cache_controller IS
 	PORT
 	(
-		mem_ready_controller : IN STD_LOGIC;
+		pass_control_to_controller : IN STD_LOGIC;
 		address	: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
@@ -60,7 +60,7 @@ ENTITY cache_controller IS
 		D_mem_data_out : out std_logic_vector(63 downto 0);
 		D_mem_read : out std_logic;
 		
-		mem_ready	: out std_logic;
+		pass_control_to_cache	: out std_logic;
 		
 		D_cache_hit : out std_logic;
 		
@@ -134,15 +134,15 @@ begin
 		FIFO_Index <= 0;
 		MAIN_mem_enable <= '0';
 		
-	elsif mem_ready_controller = '0' then
+	elsif pass_control_to_controller = '0' then
 		cache_controller_state <= x"F";
 		state <= S0;
 		
-   elsif (clock'event and clock='1' and mem_ready_controller = '1') then
+   elsif (clock'event and clock='1' and pass_control_to_controller = '1') then
 		case state is 
 			when S0 =>
 				cache_controller_state <= x"0";			
-				mem_ready <= '0';
+				pass_control_to_cache <= '0';
 				
 				main_mem_address <= address(11 downto 2);
 				MAIN_read <= '0';
@@ -253,7 +253,7 @@ begin
 				SRAM_read  <= '0';
 				SRAM_write <= '0';
 				
-				mem_ready <= '1';
+				pass_control_to_cache <= '1';
 				state <= S0;
 				
 			when S_MEM1 =>

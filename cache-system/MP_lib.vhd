@@ -34,7 +34,7 @@ constant mov5 : std_logic_vector(3 downto 0) := "1000"; --new op code to move me
 component CPU is
 port (	
 		cpu_clk					: in std_logic;
-		mem_ready:	 in std_logic;
+		mem_ready :	 in std_logic;
 		cpu_rst					: in std_logic;
 		mdout_bus				: in std_logic_vector(15 downto 0); 
 		mdin_bus					: out std_logic_vector(15 downto 0); 
@@ -45,7 +45,7 @@ port (
 		current_state: out std_logic_vector(7 downto 0);
 		IR_word					: out std_logic_vector(15 downto 0);
 		tmp_rf 					: out rf_type;
-		mem_ready_controller: 	out std_logic;
+		mem_ready_controller : 	out std_logic;
 		-- Debug variables: output to upper level for simulation purpose only
 		D_rfout_bus: out std_logic_vector(15 downto 0);  
 		D_RFwa_s, D_RFr1a_s, D_RFr2a_s: out std_logic_vector(3 downto 0);
@@ -82,7 +82,7 @@ end component;
 component controller is
 port(	
 	clock:		in std_logic;
-	mem_ready:	 in std_logic;
+	pass_control_to_controller:	 in std_logic;
 	rst:		in std_logic;
 	IR_word:	in std_logic_vector(15 downto 0);
 	RFs_ctrl:	out std_logic_vector(1 downto 0);
@@ -102,7 +102,7 @@ port(
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state: out std_logic_vector(7 downto 0);
-	mem_ready_controller: 	out std_logic;
+	pass_control_to_cache: 	out std_logic;
 	jmpen_ctrl2:	out std_logic
 );
 end component;
@@ -131,7 +131,7 @@ end component;
 component cache_controller is
 	PORT
 	(
-		mem_ready_controller : IN STD_LOGIC;
+		pass_control_to_controller : IN STD_LOGIC;
 		address	: IN STD_LOGIC_VECTOR (11 DOWNTO 0);
 		reset		: IN STD_LOGIC;
 		clken		: IN STD_LOGIC  := '1';
@@ -143,7 +143,7 @@ component cache_controller is
 		wren		: IN STD_LOGIC ;
 		q			: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
 		D_FIFO_Index : out std_logic_vector(2 downto 0);
-		mem_ready	 : OUT std_logic;
+		pass_control_to_cache	 : OUT std_logic;
 		D_cache_hit : OUT std_logic;
 		D_TRAM_tag : out std_logic_vector(9 downto 0);
 --		D_tag_table_0 : out std_logic_vector(9 downto 0);

@@ -35,7 +35,8 @@ port(	clock:		in std_logic;
 	Mwe_ctrl:	out std_logic;
 	oe_ctrl:	out std_logic;
 	current_state : out std_logic_vector(7 downto 0);
-	jmpen_ctrl2:	out std_logic
+	jmpen_ctrl2:	out std_logic;
+	output_button	: 	in std_logic
 );
 end controller;
 
@@ -46,7 +47,10 @@ architecture fsm of controller is
   signal state: state_type;
 	signal next_state: state_type;
 	signal count : integer:=0;
+	signal output_button_edge : std_logic;
+	signal old_output_button : std_logic;
 begin
+		
   process(clock, rst, IR_word, mem_ready)
     variable OPCODE: std_logic_vector(3 downto 0);
   begin
@@ -254,12 +258,18 @@ begin
 			next_state <= S11wait;
 			state <= WAIT_STATE;		  
 		when S11wait =>
-			current_state <= x"CB";
+			current_state <= x"CB"; 
 			state <= S11a;
+			
 	  when S11a =>  
 			current_state <= x"AB";
 			oe_ctrl <= '1'; 
-			state <= S1;
+			if (output_button_edge = '1') then
+				state <= S1;
+			else
+				state <= S11a;
+			end if;
+			--state <= S1;
             
       -- this should do : R2 <= mem[RF[r1]] (inverse of MOV3)
 		-- copied mov3 code as a starting point
@@ -326,4 +336,17 @@ begin
 	end case;
     end if;
   end process;
+  
+	process (clock, output_button) 
+	begin
+		if (rising_edge(clock)) then
+			if (old_output_button = '0' and output_button = '1') then
+				output_button_edge <= '1';
+			else
+				output_button_edge <= '0';
+			end if;
+			old_output_button <= output_button;
+		end if;
+	end process;
+		
 end fsm;
