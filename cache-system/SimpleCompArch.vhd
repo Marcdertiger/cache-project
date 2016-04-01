@@ -15,9 +15,9 @@ use work.MP_lib.all;
 entity SimpleCompArch is
 port( sys_clk							:	in std_logic;
 		sys_rst							:	in std_logic;
-		mem_clk_en						: 	in std_logic;
 		sys_output						:	out std_logic_vector(15 downto 0);
-		D_sys_clk_div						: 	out std_logic;
+		D_sys_clk_div					: out std_logic;
+		output_button					: 	in std_logic;
 		
 		-- Debug signals from CPU: output for simulation purpose only	
 		D_rfout_bus									: out std_logic_vector(15 downto 0);  
@@ -112,20 +112,26 @@ architecture rtl of SimpleCompArch is
 	-- Counts to 8 to divide system clock
 	signal count : integer:=0;
 	signal ExecTime : integer:=0;
-	
+	signal mem_clk_en: std_logic;
 	signal cache : cache_type;
 	signal cache_controller_mem_address : std_logic_vector(9 downto 0);
 	
 	begin
 	
-	process (sys_clk, ExecTime, IR_word) begin
-		if(rising_edge(sys_clk)) then
-		  case IR_word(15 downto 12) is
-			    when "1111" => 	ExecTime <= ExecTime;
-			    when others => 	ExecTime <= ExecTime + 1;
-				 end case;
+	process (sys_clk, ExecTime, IR_word)
+	variable OPCODE: std_logic_vector(3 downto 0);
+	begin
+		if (sys_rst = '1') then
+			ExecTime <= 0;
+		elsif(rising_edge(sys_clk)) then
+			case (IR_word(15 downto 12)) is
+				 when halt =>  Exectime <= ExecTime;
+				 when readm => ExecTime <= ExecTime;
+			    when others =>Exectime <= ExecTime + 1;
+			end case;
 		end if;
-	end process;	
+		  
+	end process;	 
 	
 Unit1: CPU port map (
 	sys_clk,
@@ -140,6 +146,7 @@ Unit1: CPU port map (
 	current_state,
 	IR_word,
 	rf_tmp,
+	output_button,					
 	mem_ready_controller,
 	D_rfout_bus,D_RFwa, D_RFr1a, D_RFr2a,D_RFwe, 			 				--Degug signals
 	D_RFr1e, D_RFr2e,D_RFs, D_ALUs,D_PCld, D_jpz);	 						--Degug signals
@@ -187,6 +194,7 @@ Unit3: obuf port map(oe, mdout_bus, sys_output);
 	D_mem_ready <= mem_ready;
 	D_mem_ready_controller <= mem_ready_controller;
 	D_cache_hit <= cache_hit;
+	mem_clk_en <= '1';
 	
 	D_cache0 <= cache(0)(0) & cache(0)(1) & cache(0)(2) & cache(0)(3);
 	D_cache1 <= cache(1)(0) & cache(1)(1) & cache(1)(2) & cache(1)(3);

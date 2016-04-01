@@ -41,7 +41,7 @@ set_global_assignment -name DEVICE EP4CE115F29C7
 set_global_assignment -name TOP_LEVEL_ENTITY SimpleCompArch_QII_14
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:14:29  MARCH 28, 2016"
-set_global_assignment -name LAST_QUARTUS_VERSION 14.0
+set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name VHDL_FILE b_7s.vhd
 set_global_assignment -name VHDL_FILE smallmux.vhd
 set_global_assignment -name VHDL_FILE sixteendivfour.vhd
